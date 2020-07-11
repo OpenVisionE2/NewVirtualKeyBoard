@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import division, print_function
 import os
 import sys
 from urllib import quote
@@ -152,7 +152,7 @@ class languageSelectionList(GUIComponent, object):
         res = [None]
         width = self.l.getItemSize().width()
         height = self.l.getItemSize().height()
-        y = (height - 16) / 2
+        y = (height - 16) // 2
         png='/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/gey18.png'
         try:
             id=str(item['val'][2])
@@ -919,7 +919,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                 else:
                     break
             if maxKeyX - minKeyX > 2:
-                self.colIdx = (maxKeyX + minKeyX) / 2
+                self.colIdx = (maxKeyX + minKeyX) // 2
         self.currentKeyId = self.keyidMap[self.rowIdx][self.colIdx]
         self.move_KMarker(oldKeyId, self.currentKeyId)
 
