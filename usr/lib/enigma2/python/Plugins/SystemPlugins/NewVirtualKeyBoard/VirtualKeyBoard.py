@@ -275,7 +275,7 @@ class KBLayoutLanguages:
                     self.saveActive_keylayout(KBLayoutId)
                     self.LoadVKLayout_callback(data)
                     return 0
-                except ImportError, e:
+                except ImportError as e:
                     pass
             else:
                     loadErrorNo=2
