@@ -1100,7 +1100,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
     def getKeyChar(self, keyid):
         state = self.specialKeyState
         if self.specialKeyState & self.SK_ALT and not self.specialKeyState & self.SK_CTRL:
-			state ^= self.SK_CTRL
+            state ^= self.SK_CTRL
         key = self.currentVKLayout['layout'].get(keyid, {})
         if state in key:
             val = key[state]
@@ -1535,27 +1535,27 @@ class vkOptionsScreen(Screen):
 class nvKeyboardSetup(ConfigListScreen, Screen):
     swidth=getDesktop(0).size().width()
     if isFHD():
-	skin='''
-	<screen name="nvKeyboardSetu" position="center,center" size="1080,540" backgroundColor="#16000000" title="New Virtual Keyboard  Settings">
-		<ePixmap position="118,482" size="38,38" pixmap="~/images/red.png" zPosition="3" transparent="1" alphatest="blend" />
-		<ePixmap position="424,482" size="38,38" pixmap="~/images/green.png" zPosition="3" transparent="1" alphatest="blend" />
-		<ePixmap position="724,482" size="38,38" pixmap="~/images/blue.png" zPosition="3" transparent="1" alphatest="blend" />
-		<eLabel position="60,468" zPosition="4" size="300,36" halign="center" font="Regular;33" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
-		<eLabel position="368,468" zPosition="4" size="300,36" halign="center" font="Regular;33" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
-		<eLabel position="735,468" zPosition="4" size="300,36" halign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard " />
-				<widget name="config" position="30,75" size="1050,480" itemHeight="45" font="Regular;36" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
-	</screen>'''
+        skin='''
+        <screen name="nvKeyboardSetu" position="center,center" size="1080,540" backgroundColor="#16000000" title="New Virtual Keyboard  Settings">
+            <ePixmap position="118,482" size="38,38" pixmap="~/images/red.png" zPosition="3" transparent="1" alphatest="blend" />
+            <ePixmap position="424,482" size="38,38" pixmap="~/images/green.png" zPosition="3" transparent="1" alphatest="blend" />
+            <ePixmap position="724,482" size="38,38" pixmap="~/images/blue.png" zPosition="3" transparent="1" alphatest="blend" />
+            <eLabel position="60,468" zPosition="4" size="300,36" halign="center" font="Regular;33" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
+            <eLabel position="368,468" zPosition="4" size="300,36" halign="center" font="Regular;33" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
+            <eLabel position="735,468" zPosition="4" size="300,36" halign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard " />
+            <widget name="config" position="30,75" size="1050,480" itemHeight="45" font="Regular;36" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
+        </screen>'''
     else:
-	skin='''
-	<screen name="nvKeyboardSetu" position="center,center" size="719,360" backgroundColor="#16000000" title="New Virtual Keyboard  Settings">
-		<ePixmap position="79,321" size="25,25" pixmap="~/images/red.png" zPosition="3" transparent="1" alphatest="blend" />
-		<ePixmap position="282,321" size="25,25" pixmap="~/images/green.png" zPosition="3" transparent="1" alphatest="blend" />
-		<ePixmap position="482,321" size="25,25" pixmap="~/images/blue.png" zPosition="3" transparent="1" alphatest="blend" />
-		<eLabel position="40,322" zPosition="4" size="200,24" halign="center" font="Regular;22" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
-		<eLabel position="245,322" zPosition="4" size="200,24" halign="center" font="Regular;22" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
-		<eLabel position="490,322" zPosition="4" size="200,24" halign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard " />
-		<widget name="config" position="20,50" size="699,320" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
-	</screen>'''
+        skin='''
+        <screen name="nvKeyboardSetu" position="center,center" size="719,360" backgroundColor="#16000000" title="New Virtual Keyboard  Settings">
+            <ePixmap position="79,321" size="25,25" pixmap="~/images/red.png" zPosition="3" transparent="1" alphatest="blend" />
+            <ePixmap position="282,321" size="25,25" pixmap="~/images/green.png" zPosition="3" transparent="1" alphatest="blend" />
+            <ePixmap position="482,321" size="25,25" pixmap="~/images/blue.png" zPosition="3" transparent="1" alphatest="blend" />
+            <eLabel position="40,322" zPosition="4" size="200,24" halign="center" font="Regular;22" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
+            <eLabel position="245,322" zPosition="4" size="200,24" halign="center" font="Regular;22" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
+            <eLabel position="490,322" zPosition="4" size="200,24" halign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard " />
+            <widget name="config" position="20,50" size="699,320" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
+        </screen>'''
 
     def __init__(self, session,fromkeyboard=False):
         Screen.__init__(self, session)
@@ -1568,7 +1568,7 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
         else:
            config.NewVirtualKeyBoard.textinput.value="NewVirtualKeyBoard"
            config.NewVirtualKeyBoard.textinput.save()
-	self.skin_path = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/NewVirtualKeyBoard")
+        self.skin_path = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/NewVirtualKeyBoard")
         self.fromkeyboard=fromkeyboard
         self['config']=MenuList([])
         ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
