@@ -3,7 +3,6 @@
 from __future__ import print_function
 import os
 import sys
-from urllib import quote
 from enigma import loadPNG, ePoint, gRGB, eListboxPythonMultiContent, eListbox, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, getDesktop, RT_WRAP
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -21,6 +20,20 @@ from Components.Pixmap import Pixmap
 from Tools.LoadPixmap import LoadPixmap
 from skin import loadSkin
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_LIBDIR
+
+from sys import version_info
+PY3 = version_info[0] == 3
+
+if PY3:
+	# Python 3
+	compat_str = str
+	from urllib.parse import quote as compat_quote
+	from urllib.request import urlopen as compat_urlopen
+else:
+	# Python 2
+	compat_str = unicode
+	from urllib import quote as compat_quote
+	from urllib2 import urlopen as compat_urlopen
 
 config.NewVirtualKeyBoard = ConfigSubsection()
 config.NewVirtualKeyBoard.keys_layout = ConfigText(default='', fixed_size=False)
@@ -63,7 +76,7 @@ def getLayoutFile(KBLayoutId):
 
 def getSLayoutFile(KBLayoutId):
     file = 'kle%s.kle' % KBLayoutId                    
-    return ServerUrl  + file
+    return ServerUrl + file
 
 def pathExists(path):
     if os.path.exists(path):
@@ -72,9 +85,8 @@ def pathExists(path):
         return False
 
 def downloadFile(url,target):
-    import urllib2
     try:
-        response = urllib2.urlopen(url,timeout=5)
+        response = compat_urlopen(url)
         with open(target,'wb') as output:
           output.write(response.read())
         return True
@@ -111,7 +123,7 @@ class languageSelectionList(GUIComponent, object):
         pass
 
     def connectSelChanged(self, fnc):
-        if not fnc in self.onSelectionChanged:
+        if fnc not in self.onSelectionChanged:
             self.onSelectionChanged.append(fnc)
 
     def disconnectSelChanged(self, fnc):
@@ -135,6 +147,7 @@ class languageSelectionList(GUIComponent, object):
         instance.setContent(None)
         self.selectionChanged_conn = None
         self.onDestroy()
+        return
 
     def moveToIndex(self, index):
         self.instance.moveSelectionTo(index)
@@ -157,12 +170,12 @@ class languageSelectionList(GUIComponent, object):
         try:
             id=str(item['val'][2])
             if os.path.exists('/usr/share/enigma2/NewVirtualKeyBoard/kle/'+id+".kle"):
-               png='/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/green18.png' 
-               res.append(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png))
+               png='/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/green18.png'
+               res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png)))
             else:
                png='/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/grey18.png' 
-               res.append(eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png))
-            res.append(eListboxPythonMultiContent.TYPE_TEXT, 40, 0, width - 4, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, str(item['val'][0]))
+               res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png)))
+            res.append((eListboxPythonMultiContent.TYPE_TEXT, 40, 0, width - 4, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, str(item['val'][0])))
         except Exception:
             pass
         return res
@@ -170,7 +183,7 @@ class languageSelectionList(GUIComponent, object):
     currentIndex = property(getCurrentIndex, moveToIndex)
     currentSelection = property(getCurrent)
 
-class KBLayoutLanguages:
+class KBLayoutLanguages():
 
     def __init__(self,LoadVKLayout_callback=None):
         self.defaultKBLAYOUT = defaultKBLAYOUT
@@ -179,8 +192,8 @@ class KBLayoutLanguages:
         self.LoadVKLayout_callback=LoadVKLayout_callback
         self.KBsettings=config.NewVirtualKeyBoard
 
-    def GetSystemLang(self,long=False):
-        if long:
+    def GetSystemLang(self, int=False):
+        if int:
             try:
                 defaultLanguage = language.getActiveLanguage()
             except Exception:
@@ -230,7 +243,7 @@ class KBLayoutLanguages:
 
     def getActive_keylayout(self):
         selectedKBLayoutId = self.KBsettings.keys_layout.value
-        return  selectedKBLayoutId
+        return selectedKBLayoutId
 
     def saveActive_keylayout(self,selectedKBLayoutId):
         if selectedKBLayoutId != self.KBsettings.keys_layout.value:
@@ -320,6 +333,7 @@ class LanguageListScreen(Screen,KBLayoutLanguages):
         self.selIdx=selIdx
         self.lastdownloaded_index=None
         self.onShown.append(self.settitle)
+        return
 
     def settitle(self):
         self.setTitle(_("Language selection"))
@@ -344,6 +358,7 @@ class LanguageListScreen(Screen,KBLayoutLanguages):
         else:
             self.languageList.moveToIndex(0)
         self.languageList.show()
+        return
 
     def keyok(self):
         index = self.languageList.getCurrentIndex()
@@ -398,16 +413,15 @@ class eConnectCallbackObj:
         self.connectHandler = None
         self.obj = None
 
-def eConnectCallback(obj, callbackFun, withExcept=False):
+def eConnectCallback(obj, callbackFun, withExcept = False):
     try:
         if 'connect' in dir(obj):
             return eConnectCallbackObj(obj, obj.connect(callbackFun))
+        if 'get' in dir(obj):
+            obj.get().append(callbackFun)
         else:
-            if 'get' in dir(obj):
-                obj.get().append(callbackFun)
-            else:
-                obj.append(callbackFun)
-            return eConnectCallbackObj(obj, callbackFun)
+            obj.append(callbackFun)
+        return eConnectCallbackObj(obj, callbackFun)
     except Exception:
         pass
     return eConnectCallbackObj()
@@ -421,10 +435,9 @@ def mkdirs(newdir, raiseException=False):
         if os.path.isdir(newdir):
             pass
         elif os.path.isfile(newdir):
-            raise OSError("cannot create directory, file already exists: '%s'"
-                           % newdir)
+            raise OSError("cannot create directory, file already exists: '%s'" % newdir)
         else:
-            (head, tail) = os.path.split(newdir)
+            head, tail = os.path.split(newdir)
             if head and not os.path.isdir(head) and not os.path.ismount(head) and not os.path.islink(head):
                 mkdirs(head)
             if tail:
@@ -435,19 +448,18 @@ def mkdirs(newdir, raiseException=False):
             raise e
     return False
 
-def GetSystemLang(long=False):
-    if long:
+def GetSystemLang(int=False):
+    if int:
         try:
             defaultLanguage = language.getActiveLanguage()
         except Exception:
-            pass
             defaultLanguage = 'en_EN'
     else:
         try:
             defaultLanguage = language.getActiveLanguage().split('_')[0]
         except Exception:
-
             defaultLanguage = 'en'
+
     return defaultLanguage
 
 class textINput(Input):
@@ -455,11 +467,12 @@ class textINput(Input):
     def __init__(self, *args, **kwargs):
         self.nvkTimeoutCallback = None
         Input.__init__(self, *args, **kwargs)
+        return
 
     def timeout(self, *args, **kwargs):
         callCallback = False
         try:
-            callCallback = (True if self.lastKey != -1 else False)
+            callCallback = True if self.lastKey != -1 else False
         except Exception:
             pass
         try:
@@ -469,7 +482,7 @@ class textINput(Input):
         if self.nvkTimeoutCallback:
             self.nvkTimeoutCallback()
 
-class textInputSuggestions:
+class textInputSuggestions():
 
     def __init__(self, callback=None, hl='en'):
         self.hl = hl
@@ -489,23 +502,27 @@ class textInputSuggestions:
         self.callback([])
 
     def parseGoogleData(self, output):
+        charsetCode = {'ar': 'windows-1256',
+         'ky': 'windows-1251',
+         'ru': 'windows-1251',
+         'el': 'windows-1253',
+         'tr': 'windows-1254',
+         'fa': 'windows-1256'}
         try:
             if output:
                 data = output
-                charset = 'ISO-8859-1'
-                if self.hl == 'ar' :
-                    charset = 'windows-1256'
-                   
-                if  self.hl == 'fa':
-                    charset = 'windows-1256'
-                elif self.hl == 'el':
-                    charset = 'windows-1253'
-                elif self.hl == 'ru':
-                    charset = 'windows-1251'                 
-                try:
-                    data = str(data.decode(charset)).encode('utf-8')
-                except:
-                    pass
+                charset = charsetCode.get(self.hl, None)
+                if charset:
+                    try:
+                        data = data.decode(charset)
+                        #data = str(data.decode(charset)).encode('utf-8') # py2
+                    except:
+                        pass
+                else:
+                    if PY3:
+                    	data = data.decode("utf-8")
+                    else:
+                    	data = data.encode("utf-8")
                 list = data.split(',')
                 data2 = []
                 for item in list:
@@ -515,7 +532,7 @@ class textInputSuggestions:
                 self.setGoogleSuggestions(data2)
             else:
                 self.callback([])
-        except:
+        except:               
             pass
         return
 
@@ -526,11 +543,11 @@ class textInputSuggestions:
         from twisted.internet import reactor
         from twisted.web.client import getPage
         self.reactor = reactor
-        if queryString is not '':
-            query = self.prepQuerry + quote(queryString)
+        if queryString!='':
+            query = self.prepQuerry + compat_quote(queryString)
             url = 'http://www.google.com' + query
-            url = 'http://suggestqueries.google.com/complete/search?output=firefox&hl=%s&gl=%s%s&q=%s' % (self.hl, self.hl, '&ds=yt' if True else '', quote(queryString))
-            getPage(url, headers={'Content-Type': 'application/x-www-form-urlencoded'}).addCallback(self.parseGoogleData).addErrback(self.dataError)
+            url = 'http://suggestqueries.google.com/complete/search?output=firefox&hl=%s&gl=%s%s&q=%s' % (self.hl, self.hl, '&ds=yt' if True else '', compat_quote(queryString))
+            getPage(str.encode(url), headers={b'Content-Type': b'application/x-www-form-urlencoded'}).addCallback(self.parseGoogleData).addErrback(self.dataError)
         else:
             return []
 
@@ -542,11 +559,11 @@ class textInputSuggestions:
             list1 = []
             if len(lines) == 0:
                 return []
-            if word and  word != '':
+            if word and word != '':
                 word = word.lower().strip()
                 for line in lines:
                     line = line.strip()
-                    if line  !='':
+                    if line !='':
                         if line.startswith(word):
                             list1.insert(0,line)
                         else:
@@ -566,25 +583,22 @@ class textInputSuggestions:
 
     def saveSearchHistory(self, txt):
         try:
-            if not os.path.exists(hfile):
-                afile = open(hfile, 'w')
-                afile.write(txt)
-                afile.close()
+            txt = txt.strip()
+            if txt == '':
                 return
-            L = list()
-            f = open(hfile, 'r')
-            for line in f.readlines():
-                if txt == line.strip():
-                    f.close()
-                    return
-                L.append(line)
-            L.insert(0, txt + '\n')
-            f.close()
-            fi = open(hfile, 'w')
-            for line in xrange(len(L)):
-                if L[line].strip() !='':
-                   fi.write(L[line])
-            fi.close()
+            if os.path.exists(hfile) == False:
+                f = open(hfile, 'w')
+                f.write(txt)
+                f.close()
+                return
+            with open(hfile, 'r+') as file:
+                for line in file:
+                    line = line.strip()
+                    if line == '':
+                        continue
+                    if txt == line:
+                        return
+                file.write('\n' + txt)
         except:
             print('error writing to history')
 
@@ -614,7 +628,7 @@ class selectList(GUIComponent, object):
         pass
 
     def connectSelChanged(self, fnc):
-        if not fnc in self.onSelectionChanged:
+        if fnc not in self.onSelectionChanged:
             self.onSelectionChanged.append(fnc)
 
     def disconnectSelChanged(self, fnc):
@@ -638,6 +652,7 @@ class selectList(GUIComponent, object):
         instance.setContent(None)
         self.selectionChanged_conn = None
         self.onDestroy()
+        return
 
     def moveToIndex(self, index):
         self.instance.moveSelectionTo(index)
@@ -693,7 +708,7 @@ class kb_layoutComponent:
         self.keys_pixmap = {}
         self.FHDSkin = getDesktop(0).size().width() == 1920
         for key in kbSkeysList:
-            self.keys_pixmap[key] = LoadPixmap(iconsDir(('nvk_hd/%s.png' if self.FHDSkin else 'nvk/%s.png')) % key)
+            self.keys_pixmap[key] = LoadPixmap(iconsDir('nvk_hd/%s.png' if self.FHDSkin else 'nvk/%s.png') % key)
         for i in range(0, 63):
             try:
                 self[str(i)] = createPixmap()
@@ -716,7 +731,7 @@ class kb_layoutComponent:
         self.colors = colors
         self.specialKeyState = self.SK_NONE
 
-class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayoutLanguages):
+class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLayoutLanguages):
 
     def __init__(self, session, title='', text=''):
         self.session = session
@@ -726,14 +741,16 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         self.createKID()
         self.drawKeyMap()
         lastSearchedText=''
-        if text.strip()=='':
-            text=self.KBsettings.lastsearchText.value
-        try:self.showsuggestion = self.KBsettings.showsuggestion.value
-        except:self.showsuggestion=True
+        self.KBsettings = config.NewVirtualKeyBoard
+        if text.strip() == '':
+            text = self.KBsettings.lastsearchText.value
+        try:
+            self.showsuggestion = self.KBsettings.showsuggestion.value
+        except:
+            self.showsuggestion = True
         self.showHistory=self.showsuggestion
         self.showHistory=self.showsuggestion
         self.googleSuggestionList=[]
-        print("self.showsuggestion",self.showsuggestion)
         self.skinName = 'NewVirtualKeyBoard'
         Screen.__init__(self, session)
         textInputSuggestions.__init__(self, callback=self.setGoogleSuggestions)
@@ -749,14 +766,17 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         self.counter = 0
         self['suggestionheader'] = Label(' ')
         self['historyheader'] = Label(' ')
-        self.header = (title if title else _('Enter search text'))
+        self.header = title if title else _('Enter search text')
         self.startText = text
         self['text'] = textINput(text=text)
         self['header'] = Label(' ')
         self['flag'] = Pixmap()
         self.currentVKLayout = self.defaultKBLAYOUT
         self.selectedKBLayoutId = self.KBsettings.keys_layout.value
-        self.emptykey = u''
+        if PY3:
+        	self.emptykey = ''
+        else:
+        	self.emptykey = u''
         self.vkRequestedId = ''
         self.focus = self.keyboard_hasfocus
 
@@ -819,6 +839,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             self.KBsettings.keys_layout.value = self.selectedKBLayoutId
             self.KBsettings.keys_layout.save()
             configfile.save()
+        return
 
     def focus_constants(self):
         self.history_hasfocus = 1
@@ -826,16 +847,16 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         self.suggestion_hasfocus = 2
 
     def clearText(self):
-            self["text"].deleteAllChars()
-            self["text"].update()
-            self.input_updated()
+        self['text'].deleteAllChars()
+        self['text'].update()
+        self.input_updated()
 
     def insertSpace(self):
         self.processKeyId(59)
 
     def loadKBLayout(self):
-        KBLayoutId = (self.vkRequestedId if self.vkRequestedId else self.selectedKBLayoutId)
-        KBLayoutId=self.getDefault_KBLayout(KBLayoutId)
+        KBLayoutId = self.vkRequestedId if self.vkRequestedId else self.selectedKBLayoutId
+        KBLayoutId = self.getDefault_KBLayout(KBLayoutId)
         if not self.getKeyboardLayoutItem(KBLayoutId):
             KBLayoutId = self.selectedKBLayoutId
         self.getKeyboardLayout(KBLayoutId)
@@ -843,7 +864,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
     def setText(self, text):
         self['text'].setText(text)
         self['text'].right()
-        self['text'].currPos = len(text.decode('utf-8'))
+        if PY3:
+        	self['text'].currPos = len(text) 
+        else:
+        	self['text'].currPos = len(text.decode('utf-8'))
         self['text'].right()
         self.input_updated()
 
@@ -873,8 +897,12 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         self['_57'].setText('Ctrl')
         self['_58'].setText('Alt')
         self['_60'].setText('Alt')
-        self['_61'].setText(u'\u2190'.encode('utf-8'))
-        self['_62'].setText(u'\u2192'.encode('utf-8'))
+        if PY3:
+        	self['_61'].setText('\u2190')
+        	self['_62'].setText('\u2192')
+        else:
+        	self['_61'].setText(u'\u2190'.encode('utf-8'))
+        	self['_62'].setText(u'\u2192'.encode('utf-8'))
 
     def processArrowKey(self, dx=0, dy=0):
         oldKeyId = self.keyidMap[self.rowIdx][self.colIdx]
@@ -905,7 +933,6 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                     break
         if dx != 0:
             keyID = self.keyidMap[self.rowIdx][self.colIdx]
-
             maxKeyX = self.colIdx
             for idx in range(self.colIdx + 1, self.colMax):
                 if keyID == self.keyidMap[self.rowIdx][idx]:
@@ -919,7 +946,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                 else:
                     break
             if maxKeyX - minKeyX > 2:
-                self.colIdx = (maxKeyX + minKeyX) / 2
+                if PY3:
+                	self.colIdx = int((maxKeyX + minKeyX) / 2)
+                else:
+                	self.colIdx = (maxKeyX + minKeyX) / 2
         self.currentKeyId = self.keyidMap[self.rowIdx][self.colIdx]
         self.move_KMarker(oldKeyId, self.currentKeyId)
 
@@ -935,8 +965,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         if newKeyId != -1:
             keyid = str(newKeyId)
             marker = self.markerMap.get(keyid, 'mkey')
-            self[marker].instance.move(ePoint(self[keyid].position[0],
-                    self[keyid].position[1]))
+            self[marker].instance.move(ePoint(self[keyid].position[0], self[keyid].position[1]))
             self[marker].show()
 
     def processKeyId(self, keyid):
@@ -944,7 +973,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             keyid = 42
         if keyid == 1:
             if self.emptykey:
-                self.emptykey = u''
+                if PY3:
+                	self.emptykey = ''
+                else:
+                	self.emptykey = u''
                 self.updateKsText()
             else:
                self.close(None)
@@ -957,7 +989,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             self['text'].delete()
             self.input_updated()
             return
-        elif keyid == 0x10:
+        elif keyid == 16:
             self['text'].deleteAllChars()
             self['text'].update()
             self.input_updated()
@@ -973,7 +1005,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             return
         elif keyid == 42:
             try:
-                text = self['text'].getText().decode('UTF-8').encode('UTF-8')
+                if PY3:
+                	text = self['text'].getText()
+                else:
+                	text = self['text'].getText().decode('UTF-8').encode('UTF-8')
             except Exception:
                 text = ''
                 pass
@@ -1006,7 +1041,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         else:
             updateKsText = False
             ret = 0
-            text = u''
+            if PY3:
+            	text = ''
+            else:
+            	text = u''
             val = self.getKeyChar(keyid)
             if val:
                 for special in [(self.SK_CTRL, [57]), (self.SK_ALT, [58, 60]), (self.SK_SHIFT, [43, 55])]:
@@ -1021,7 +1059,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                         text = self.currentVKLayout['deadkeys'][self.emptykey][val]
                     else:
                         text = self.emptykey + val
-                    self.emptykey = u''
+                    if PY3:
+                        self.emptykey = ''
+                    else:
+                        self.emptykey = u''
                     updateKsText = True
                 elif val in self.currentVKLayout['deadkeys']:
                     self.emptykey = val
@@ -1033,7 +1074,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             if updateKsText:
                 self.updateKsText()
             return ret
-        return 0
+            return
 
     def getinstalledkeylayout(self):
         path = vkLayoutDir
@@ -1067,14 +1108,14 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
 
     def getKeyboardLayout(self,KBLayoutId):
         ret=self.setActive_Layout( KBLayoutId)
-        if ret==1:
+        if ret == 1:
             vkLayoutItem = self.getKeyboardLayoutItem(KBLayoutId)
-            self.session.open(MessageBox, text= _(kblayout_loading_error) % vkLayoutItem[0], type=MessageBox.TYPE_ERROR)
+            self.session.open(MessageBox, text=_(kblayout_loading_error) % vkLayoutItem[0], type=MessageBox.TYPE_ERROR)
             return
-        elif ret==2:
-            success=self.downloadKBlayout(KBLayoutId)
+        if ret == 2:
+            success = self.downloadKBlayout(KBLayoutId)
             if not success:
-                     self.loadVKLayout(self.defaultKBLAYOUT)
+                self.loadVKLayout(self.defaultKBLAYOUT)
         self.displayActiveLayoutFlag(KBLayoutId)
                          
     def displayActiveLayoutFlag(self,KBLayoutId):
@@ -1086,7 +1127,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         if layout != None:
             self.currentVKLayout = layout
         self.updateKsText()
-        self['_56'].setText(self.currentVKLayout['locale'].encode('UTF-8').split('-', 1)[0].upper())
+        if PY3:
+        	self['_56'].setText(self.currentVKLayout['locale'].split('-', 1)[0].upper())
+        else:
+        	self['_56'].setText(self.currentVKLayout['locale'].encode('UTF-8').split('-', 1)[0].upper())
         self['_56'].show()
 
     def updateSKey(self, keysidTab, state):
@@ -1105,7 +1149,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
         if state in key:
             val = key[state]
         else:
-            val = u''
+            if PY3:
+            	val = ''
+            else:
+            	val = u''
         return val
 
     def updateNormalKText(self, keyid):
@@ -1124,7 +1171,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             color = self.colors['color4']
         skinKey = self['_%s' % keyid]
         skinKey.instance.setForegroundColor(color)
-        skinKey.setText(val.encode('utf-8'))
+        if PY3:
+        	skinKey.setText(val)
+        else:
+        	skinKey.setText(val.encode('utf-8'))
 
     def updateKsText(self):
         for rangeItem in [(2, 14), (17, 28), (31, 41), (44, 54), (59,59)]:
@@ -1156,7 +1206,11 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             else:
                 sel = False
             listValue.append(({'sel': sel, 'val': x}, ))
-        self.session.openWithCallback(self.languageSelectionBack,LanguageListScreen,listValue, selIdx,self.loadVKLayout)
+        try:    
+         self.session.openWithCallback(self.languageSelectionBack,LanguageListScreen,listValue, selIdx,self.loadVKLayout)
+        except:
+               print ("error")
+        return
       
     def languageSelectionBack(self,index=None):
         self.selectedKBLayoutId = self.getActive_keylayout()
@@ -1231,7 +1285,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
 
     def keyOK(self):
         if self.focus in (self.suggestion_hasfocus, self.history_hasfocus):
-            text = self[('suggestionList' if self.focus == self.suggestion_hasfocus else 'historyList')].getCurrent()
+            text = self['suggestionList' if self.focus == self.suggestion_hasfocus else 'historyList'].getCurrent()
             if text:
                 self.setText(text)
             self.currentKeyId = 0
@@ -1246,7 +1300,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
     def keyBack(self):
         if self.focus == self.keyboard_hasfocus:
             if self.emptykey:
-                self.emptykey = u''
+                if PY3:
+                	self.emptykey = ''
+                else:
+                	self.emptykey = u''
                 self.updateKsText()
             else:
                 self.saveActive_keylayout(self.selectedKBLayoutId) 
@@ -1255,6 +1312,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
             self.switchToKayboard()
         else:
             return 0
+        return
 
     def keyUp(self):
         if self.focus == self.keyboard_hasfocus:
@@ -1269,6 +1327,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                 item.instance.moveSelection(item.instance.moveUp)
         else:
             return 0
+        return
 
     def keyDown(self):
         if self.focus == self.keyboard_hasfocus:
@@ -1283,6 +1342,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                 item.instance.moveSelection(item.instance.moveDown)
         else:
             return 0
+        return
 
     def keyLeft(self):
         if self.focus == self.history_hasfocus:
@@ -1301,7 +1361,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                 if self.showHistory and self.showsuggestion == True:
                     self.switchToSearchHistory()
                     return
-                elif self.showsuggestion == True:
+                if self.showsuggestion == True:
                     self.switchToGoogleSuggestions()
                     return
             if self.currentKeyId == 0:
@@ -1328,7 +1388,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent,KBLayo
                 if self.showsuggestion:
                     self.switchToGoogleSuggestions()
                     return
-                elif self.showHistory:
+                if self.showHistory:
                     self.switchToSearchHistory()
                     return
             if self.currentKeyId == 0:
@@ -1561,8 +1621,8 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
         Screen.__init__(self, session)
         self.list = []
         self.list = []
-        pyo_link = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.pyo")
-        if not os.path.islink(pyo_link):
+        py_link = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.py")
+        if not os.path.islink(py_link):
            config.NewVirtualKeyBoard.textinput.value="VirtualKeyBoard"
            config.NewVirtualKeyBoard.textinput.save()
         else:
@@ -1572,8 +1632,7 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
         self.fromkeyboard=fromkeyboard
         self['config']=MenuList([])
         ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
-        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions'], {'green': self.keySave,'blue':self.showkeyboard ,       
-         'cancel': self.keyClose,"left": self.keyLeft,"right": self.keyRight,}, -2)
+        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions'], {'green':self.keySave, 'blue':self.showkeyboard, 'yellow':self.showNewkeyboard, 'cancel': self.keyClose, "left": self.keyLeft, "right": self.keyRight,}, -2)
         self.currKeyoboard=config.NewVirtualKeyBoard.textinput.value
         self.createConfigList()
 
@@ -1600,27 +1659,27 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
         for x in self['config'].list:
             x[1].save()
         configfile.save()
-        pyo_link = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.pyo")
+        py_link = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.py")
         py_image = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.py")
         py_backup = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard_backup.py")
         pyo_image = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.pyo")
         pyo_backup = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard_backup.pyo")
-        pyo_NewVirtualKeyBoard = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Plugins/SystemPlugins/NewVirtualKeyBoard/VirtualKeyBoard.pyo")
+        py_NewVirtualKeyBoard = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/NewVirtualKeyBoard/VirtualKeyBoard.py")
         if not config.NewVirtualKeyBoard.textinput.value == self.currKeyoboard :
            if config.NewVirtualKeyBoard.textinput.value == "NewVirtualKeyBoard":
-               if not os.path.islink(pyo_link):
+               if not os.path.islink(py_link):
                   if os.path.exists(py_image):
                      os.rename(py_image, py_backup)
                   if os.path.exists(pyo_image):
                      os.rename(pyo_image, pyo_backup)
-                  os.symlink(pyo_NewVirtualKeyBoard, pyo_link)
+                  os.symlink(py_NewVirtualKeyBoard, py_link)
            elif config.NewVirtualKeyBoard.textinput.value == "VirtualKeyBoard":
-               if os.path.islink(pyo_link):
+               if os.path.islink(py_link):
                   if os.path.exists(py_backup):
-                     os.remove(pyo_link)
+                     os.remove(py_link)
                      os.rename(py_backup, py_image)
                   elif os.path.exists(pyo_backup):
-                     os.remove(pyo_link)
+                     os.remove(py_link)
                      os.rename(pyo_backup, pyo_image)
                else:
                   pass
@@ -1632,8 +1691,19 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
         if self.fromkeyboard:
            self.close()
         else:
-            from Screens.VirtualKeyBoard import VirtualKeyBoard
-            self.session.open(VirtualKeyBoard)
+            try:    
+                   from Screens.VirtualKeyBoard import VirtualKeyBoard
+            except:
+                    print ("error")
+
+    def showNewkeyboard(self):
+        if self.fromkeyboard:
+           self.close()
+        else:
+            try:    
+                   self.session.open(VirtualKeyBoard)
+            except:
+                    print("error")
 
     def restartenigma(self, result):
         if result:

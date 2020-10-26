@@ -1,5 +1,5 @@
 <skin>
-<screen name="NewVirtualKeyBoard" position="center,300" size="1280,420" title="E2iStream virtual keyboard"  backgroundColor="transparent" flags = "wfNoBorder">
+<screen name="NewVirtualKeyBoard" position="center,300" size="1280,420" title="E2iStream virtual keyboard" backgroundColor="transparent" flags = "wfNoBorder">
 <widget name="header" zPosition="2" position="270,34" size="740,36"  transparent="1" noWrap="1" font="Regular;24" valign="center" halign="left" foregroundColor="#ffffff" backgroundColor="#04233f" />
 <widget name="text"   zPosition="2" position="270,82" size="740,32"  transparent="1" noWrap="1" font="Regular;28" valign="center" halign="left" />
 <widget name="flag"   zPosition="2" position="268,330" size="710,46"  transparent="1"  />

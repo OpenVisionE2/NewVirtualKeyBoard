@@ -3,7 +3,7 @@
 from Plugins.Plugin import PluginDescriptor
 
 def main(session, **kwargs):
-    from VirtualKeyBoard import nvKeyboardSetup
+    from .VirtualKeyBoard import nvKeyboardSetup
     session.open(nvKeyboardSetup)
 
 def menu(menuid, **kwargs):
