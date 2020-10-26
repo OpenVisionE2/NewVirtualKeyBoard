@@ -1,4 +1,6 @@
 <skin>
+
+
 <screen name="NewVirtualKeyBoard" position="center,450" size="1920,630" title="E2iStream virtual keyboard"  backgroundColor="transparent"   flags = "wfNoBorder">
 <widget name="header" zPosition="2" position="440,84" size="1040,56"  transparent="1" noWrap="1" font="Regular;30" valign="center" halign="left" foregroundColor="#ffffff" backgroundColor="#000000" />
 <widget name="text"   zPosition="2" position="440,157" size="1040,56"  transparent="1" noWrap="1" font="Regular;37" valign="center" halign="left" />
@@ -152,13 +154,15 @@
 <widget name="suggestionheader" zPosition="2" position="1490,84" size="350,56"  transparent="0" noWrap="1" font="Regular;30" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#000000" />
 <widget name="suggestionList"   zPosition="1"  position="1490,140" size="350,430" scrollbarMode="showOnDemand" transparent="0"  backgroundColor="#3f4450" enableWrapAround="1" />
 </screen>
+                <screen name="LanguageListScreen" position="center,center" size="900,760" backgroundColor="#16000000" transparent="0" title="Select Language" >
+                       <widget name="languageList" position="0,0" size="900,700"  backgroundColor="#3f4450" transparent = "0" scrollbarMode="showOnDemand" />
+                      <widget name="info" zPosition="2" position="center,710" size="900,40"  transparent="0" noWrap="1" font="Regular;30" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#0f64b2" />
+               
 
-<screen name="LanguageListScreen" position="center,center" size="900,760" backgroundColor="#16000000" transparent="0" title="Select Language" >
-<widget name="languageList" position="0,0" size="900,700"  backgroundColor="#3f4450" transparent = "0" scrollbarMode="showOnDemand" />
-<widget name="info" zPosition="2" position="center,710" size="900,40"  transparent="0" noWrap="1" font="Regular;30" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#0f64b2" />
-</screen>
+                </screen>
 
-<screen name="vkOptionsScreen" position="center,center" size="900,720" backgroundColor="#16000000" transparent="0" title="Addkey" >
-<widget name="menu" position="5,5" size="900,720"  backgroundColor="#3f4450" transparent = "0" />
-</screen>
+
+                <screen name="vkOptionsScreen" position="center,center" size="900,720" backgroundColor="#16000000" transparent="0" title="Addkey" >
+                       <widget name="menu" position="5,5" size="900,720"  backgroundColor="#3f4450" transparent = "0" />
+                </screen>
 </skin>
