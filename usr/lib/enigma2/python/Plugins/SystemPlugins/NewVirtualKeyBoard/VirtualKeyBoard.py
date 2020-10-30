@@ -84,10 +84,10 @@ def pathExists(path):
     else:
         return False
 
-def downloadFile(url,target):
+def downloadFile(url, target):
     try:
         response = compat_urlopen(url)
-        with open(target,'wb') as output:
+        with open(target, 'wb') as output:
           output.write(response.read())
         return True
     except:
@@ -245,7 +245,7 @@ class KBLayoutLanguages():
         selectedKBLayoutId = self.KBsettings.keys_layout.value
         return selectedKBLayoutId
 
-    def saveActive_keylayout(self,selectedKBLayoutId):
+    def saveActive_keylayout(self, selectedKBLayoutId):
         if selectedKBLayoutId != self.KBsettings.keys_layout.value:
             self.KBsettings.keys_layout.value =selectedKBLayoutId
             self.KBsettings.keys_layout.save()
@@ -253,7 +253,7 @@ class KBLayoutLanguages():
         self.saveInstalled_keylayout()    
         return selectedKBLayoutId
 
-    def KeyLayoutExists(self,KBLayoutId):
+    def KeyLayoutExists(self, KBLayoutId):
         path = vkLayoutDir
         KBLayoutIdPath=path+KBLayoutId+'kle'
         if pathExists(path):
@@ -313,15 +313,15 @@ class KBLayoutLanguages():
            flag = '/usr/share/enigma2/countries/' +'noflag.png'
         return flag
 
-class LanguageListScreen(Screen,KBLayoutLanguages):
+class LanguageListScreen(Screen, KBLayoutLanguages):
 
     def __init__(self, session, listValue=[], selIdx=None,loadVKLayout_callback=None):
         Screen.__init__(self, session)
         self.loadVKLayout_callback=loadVKLayout_callback
-        KBLayoutLanguages.__init__(self,LoadVKLayout_callback=self.loadVKLayout_callback)
+        KBLayoutLanguages.__init__(self, LoadVKLayout_callback=self.loadVKLayout_callback)
         self.skinName = 'LanguageListScreen'
         self['languageList'] = languageSelectionList()
-        self['actions'] = ActionMap(['ColorActions', 'WizardActions'],{
+        self['actions'] = ActionMap(['ColorActions', 'WizardActions'], {
         'back': self.close,
         'ok': self.keyok,        
         }, -1)
@@ -565,7 +565,7 @@ class textInputSuggestions():
                     line = line.strip()
                     if line !='':
                         if line.startswith(word):
-                            list1.insert(0,line)
+                            list1.insert(0, line)
                         else:
                             list1.append(line)
             if not word or word.strip()=='':
@@ -737,7 +737,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self.session = session
         self.focus_constants()
         kb_layoutComponent.__init__(self)
-        KBLayoutLanguages.__init__(self,LoadVKLayout_callback=self.loadVKLayout)
+        KBLayoutLanguages.__init__(self, LoadVKLayout_callback=self.loadVKLayout)
         self.createKID()
         self.drawKeyMap()
         lastSearchedText=''
@@ -781,7 +781,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self.focus = self.keyboard_hasfocus
 
     def getActionMap(self):
-        return NumberActionMap(['WizardActions', 'DirectionActions', 'ColorActions', 'KeyboardInputActions', 'InputBoxActions', 'InputAsciiActions','SetupActions', 'MenuActions',], {
+        return NumberActionMap(['WizardActions', 'DirectionActions', 'ColorActions', 'KeyboardInputActions', 'InputBoxActions', 'InputAsciiActions', 'SetupActions', 'MenuActions',], {
             'gotAsciiCode': self.keyGotAscii,
             'ok': self.keyOK,
             'ok_repeat': self.keyOK,
@@ -1106,7 +1106,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         except:
             pass
 
-    def getKeyboardLayout(self,KBLayoutId):
+    def getKeyboardLayout(self, KBLayoutId):
         ret=self.setActive_Layout( KBLayoutId)
         if ret == 1:
             vkLayoutItem = self.getKeyboardLayoutItem(KBLayoutId)
@@ -1118,7 +1118,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
                 self.loadVKLayout(self.defaultKBLAYOUT)
         self.displayActiveLayoutFlag(KBLayoutId)
                          
-    def displayActiveLayoutFlag(self,KBLayoutId):
+    def displayActiveLayoutFlag(self, KBLayoutId):
         flag=self.getKeyboardLayoutFlag(KBLayoutId)
         self['flag'].instance.setPixmapFromFile(flag)
         self['flag'].instance.show()                         
@@ -1177,7 +1177,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         	skinKey.setText(val.encode('utf-8'))
 
     def updateKsText(self):
-        for rangeItem in [(2, 14), (17, 28), (31, 41), (44, 54), (59,59)]:
+        for rangeItem in [(2, 14), (17, 28), (31, 41), (44, 54), (59, 59)]:
             for keyid in range(rangeItem[0], rangeItem[1] + 1):
                 self.updateNormalKText(keyid)
 
@@ -1207,7 +1207,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
                 sel = False
             listValue.append(({'sel': sel, 'val': x}, ))
         try:    
-         self.session.openWithCallback(self.languageSelectionBack,LanguageListScreen,listValue, selIdx,self.loadVKLayout)
+         self.session.openWithCallback(self.languageSelectionBack, LanguageListScreen, listValue, selIdx, self.loadVKLayout)
         except:
                print ("error")
         return
@@ -1505,7 +1505,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             if index == 0:
                 self.switchToLanguageSelection()
             elif index == 2:
-                self.session.openWithCallback(self.settings_back,nvKeyboardSetup)
+                self.session.openWithCallback(self.settings_back, nvKeyboardSetup)
                 return
             if index == 1:
                 self.clearSearchHistory()
@@ -1541,7 +1541,7 @@ class vkOptionsScreen(Screen):
         Screen.__init__(self, session)
         self.skinName = 'vkOptionsScreen'
         self['menu'] = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
-        self['actions'] = ActionMap(['ColorActions', 'WizardActions'],{
+        self['actions'] = ActionMap(['ColorActions', 'WizardActions'], {
         'back': self.close,
         'ok': self.exit,
         'back': self.close
@@ -1632,14 +1632,14 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
         self.fromkeyboard=fromkeyboard
         self['config']=MenuList([])
         ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
-        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions'], {'green':self.keySave, 'blue':self.showkeyboard, 'yellow':self.showNewkeyboard, 'cancel': self.keyClose, "left": self.keyLeft, "right": self.keyRight,}, -2)
+        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions'], {'green': self.keySave, 'blue': self.showkeyboard, 'yellow': self.showNewkeyboard, 'cancel': self.keyClose, "left": self.keyLeft, "right": self.keyRight,}, -2)
         self.currKeyoboard=config.NewVirtualKeyBoard.textinput.value
         self.createConfigList()
 
     def changedEntry(self):
             cur = self['config'].list[0]
             curval=cur[1].value
-            print("curval",curval)
+            print("curval", curval)
             if 'NewVirtualKeyBoard' ==curval:
                 self.createConfigList(True)
             else:
