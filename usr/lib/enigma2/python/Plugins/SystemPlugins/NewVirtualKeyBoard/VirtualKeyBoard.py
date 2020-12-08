@@ -1734,7 +1734,8 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
                 if not os.path.islink(py_link):
                     if os.path.exists(py_image):
                         os.rename(py_image, py_backup)
-                        os.remove(pyo_image)
+                        if os.path.exists(pyo_image):
+                            os.remove(pyo_image)
                     elif os.path.exists(pyo_image):
                         os.rename(pyo_image, pyo_backup)
                     os.symlink(py_NewVirtualKeyBoard, py_link)
