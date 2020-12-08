@@ -1,164 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <skin>
-<screen name="NewVirtualKeyBoard" position="center,450" size="1920,630" title="E2iStream virtual keyboard" backgroundColor="transparent" flags = "wfNoBorder">
-<widget name="header" zPosition="2" position="440,84" size="1040,56"  transparent="1" noWrap="1" font="Regular;30" valign="center" halign="left" foregroundColor="#ffffff" backgroundColor="#000000" />
-<widget name="text"   zPosition="2" position="440,157" size="1040,56"  transparent="1" noWrap="1" font="Regular;37" valign="center" halign="left" />
-<widget name="flag"   zPosition="2" position="438,500" size="1010,66"  transparent="1"  />
-<ePixmap position = "1840,610"  size = "45,30"  pixmap = "/usr/share/enigma2/NewVirtualKeyBoard/icons/menu.png" zPosition = "3" />
-<widget name="0" zPosition="1" position="435,150" size="1050,70" transparent="1" alphatest="blend" />
-<widget name="tmkey" zPosition="5" position="0,0" size="1050,70" transparent="1" alphatest="blend" />
-<widget name="mkey" zPosition="5" position="0,0" size="70,70" transparent="1" alphatest="blend" />
-<widget name="mmkey" zPosition="5" position="0,0" size="140,70" transparent="1" alphatest="blend" />
-<widget name="lmkey" zPosition="5" position="0,0" size="560,70" transparent="1" alphatest="blend" />
-<widget name="1" zPosition="1" position="435,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_1" zPosition="3" position="435,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="2" zPosition="1" position="505,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_2" zPosition="3" position="505,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="3" zPosition="1" position="575,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_3" zPosition="3" position="575,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="4" zPosition="1" position="645,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_4" zPosition="3" position="645,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="5" zPosition="1" position="715,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_5" zPosition="3" position="715,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="6" zPosition="1" position="785,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_6" zPosition="3" position="785,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="7" zPosition="1" position="855,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_7" zPosition="3" position="855,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="8" zPosition="1" position="925,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_8" zPosition="3" position="925,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="9" zPosition="1" position="995,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_9" zPosition="3" position="995,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="10" zPosition="1" position="1065,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_10" zPosition="3" position="1065,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="11" zPosition="1" position="1135,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_11" zPosition="3" position="1135,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="12" zPosition="1" position="1205,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_12" zPosition="3" position="1205,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="13" zPosition="1" position="1275,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_13" zPosition="3" position="1275,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="14" zPosition="1" position="1345,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_14" zPosition="3" position="1345,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="15" zPosition="1" position="1415,220" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_15" zPosition="3" position="1415,220" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="b" zPosition="3" position="1434,245" size="32,20" transparent="1" alphatest="blend" />
-<widget name="16" zPosition="1" position="435,290" size="140,70" transparent="1" alphatest="blend" />
-<widget name="_16" zPosition="3" position="435,290" size="140,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="17" zPosition="1" position="575,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_17" zPosition="3" position="575,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="18" zPosition="1" position="645,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_18" zPosition="3" position="645,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="19" zPosition="1" position="715,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_19" zPosition="3" position="715,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="20" zPosition="1" position="785,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_20" zPosition="3" position="785,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="21" zPosition="1" position="855,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_21" zPosition="3" position="855,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="22" zPosition="1" position="925,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_22" zPosition="3" position="925,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="23" zPosition="1" position="995,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_23" zPosition="3" position="995,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="24" zPosition="1" position="1065,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_24" zPosition="3" position="1065,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="25" zPosition="1" position="1135,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_25" zPosition="3" position="1135,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="26" zPosition="1" position="1205,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_26" zPosition="3" position="1205,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="27" zPosition="1" position="1275,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_27" zPosition="3" position="1275,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="28" zPosition="1" position="1345,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_28" zPosition="3" position="1345,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="29" zPosition="1" position="1415,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_29" zPosition="3" position="1415,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="30" zPosition="1" position="1485,290" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_30" zPosition="3" position="1485,290" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="30" zPosition="1" position="435,360" size="140,70" transparent="1" alphatest="blend" />
-<widget name="_30" zPosition="3" position="435,360" size="140,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="31" zPosition="1" position="575,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_31" zPosition="3" position="575,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="32" zPosition="1" position="645,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_32" zPosition="3" position="645,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="33" zPosition="1" position="715,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_33" zPosition="3" position="715,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="34" zPosition="1" position="785,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_34" zPosition="3" position="785,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="35" zPosition="1" position="855,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_35" zPosition="3" position="855,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="36" zPosition="1" position="925,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_36" zPosition="3" position="925,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="37" zPosition="1" position="995,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_37" zPosition="3" position="995,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="38" zPosition="1" position="1065,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_38" zPosition="3" position="1065,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="39" zPosition="1" position="1135,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_39" zPosition="3" position="1135,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="40" zPosition="1" position="1205,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_40" zPosition="3" position="1205,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="41" zPosition="1" position="1275,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_41" zPosition="3" position="1275,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="42" zPosition="1" position="1345,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_42" zPosition="3" position="1345,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="43" zPosition="1" position="1415,360" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_43" zPosition="3" position="1415,360" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="42" zPosition="1" position="1345,360" size="140,70" transparent="1" alphatest="blend" />
-<widget name="_42" zPosition="3" position="1345,360" size="140,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="43" zPosition="1" position="435,430" size="140,70" transparent="1" alphatest="blend" />
-<widget name="_43" zPosition="3" position="435,430" size="140,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="44" zPosition="1" position="575,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_44" zPosition="3" position="575,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="45" zPosition="1" position="645,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_45" zPosition="3" position="645,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="46" zPosition="1" position="715,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_46" zPosition="3" position="715,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="47" zPosition="1" position="785,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_47" zPosition="3" position="785,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="48" zPosition="1" position="855,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_48" zPosition="3" position="855,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="49" zPosition="1" position="925,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_49" zPosition="3" position="925,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="50" zPosition="1" position="995,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_50" zPosition="3" position="995,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="51" zPosition="1" position="1065,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_51" zPosition="3" position="1065,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="52" zPosition="1" position="1135,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_52" zPosition="3" position="1135,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="53" zPosition="1" position="1205,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_53" zPosition="3" position="1205,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="54" zPosition="1" position="1275,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_54" zPosition="3" position="1275,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="55" zPosition="1" position="1345,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_55" zPosition="3" position="1345,430" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="56" zPosition="1" position="1415,430" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_56" zPosition="3" position="1455,430" size="30,70" transparent="1"  noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="55" zPosition="1" position="1345,430" size="140,70" transparent="1" alphatest="blend" />
-<widget name="_55" zPosition="3" position="1345,430" size="140,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="l" zPosition="3" position="435,500" size="140,70" transparent="1" alphatest="blend" />
-<widget name="56" zPosition="1" position="435,500" size="140,70" transparent="1" alphatest="blend" />
-<widget name="_56" zPosition="3" position="475,500" size="100,70" transparent="1" noWrap="1" font="Regular;25" valign="bottom" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="57" zPosition="1" position="575,500" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_57" zPosition="3" position="575,500" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="58" zPosition="1" position="645,500" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_58" zPosition="3" position="645,500" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="59" zPosition="1" position="715,500" size="560,70" transparent="1" alphatest="blend" />
-<widget name="_59" zPosition="3" position="715,500" size="560,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#404551" />
-<widget name="60" zPosition="1" position="1275,500" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_60" zPosition="3" position="1275,500" size="70,70" transparent="1" noWrap="1" font="Regular;25" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="61" zPosition="1" position="1345,500" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_61" zPosition="3" position="1345,500" size="70,70" transparent="1" noWrap="1" font="Regular;35" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="62" zPosition="1" position="1415,500" size="70,70" transparent="1" alphatest="blend" />
-<widget name="_62" zPosition="3" position="1415,500" size="70,70" transparent="1" noWrap="1" font="Regular;35" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#1688b2" />
-<widget name="m_0" zPosition="2" position="1425,280" size="50,3" noWrap="1" font="Regular;2" valign="center" halign="center" foregroundColor="#ed1c24" backgroundColor="#ed1c24" />
-<widget name="m_5" zPosition="2" position="1355,420" size="120,3" noWrap="1" font="Regular;2" valign="center" halign="center" foregroundColor="#22b14c" backgroundColor="#22b14c" />
-<widget name="historyheader" zPosition="2" position="80,84" size="350,56"  transparent="0" noWrap="1" font="Regular;30" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#000000" />
-<widget name="historyList"   zPosition="1"  position="80,140" size="350,430" scrollbarMode="showOnDemand" transparent="0"  backgroundColor="#3f4450" enableWrapAround="1" />
-<widget name="suggestionheader" zPosition="2" position="1490,84" size="350,56"  transparent="0" noWrap="1" font="Regular;30" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#000000" />
-<widget name="suggestionList"   zPosition="1"  position="1490,140" size="350,430" scrollbarMode="showOnDemand" transparent="0"  backgroundColor="#3f4450" enableWrapAround="1" />
-</screen>
+    <screen name="NewVirtualKeyBoard" position="center,476" size="1920,630" title="E2iStream virtual keyboard" backgroundColor="#34000000" flags="wfNoBorder">
+        
+        <eLabel position="450,21" size="1020,72" backgroundColor="#3f434f" transparent="0"/>
+        
+        <!-- title -->
+        <widget name="header" zPosition="2" position="471,21" size="450,72" font="Regular;30" foregroundColor="#ffffff" backgroundColor="#3f434f" transparent="1" noWrap="1" valign="center" halign="left" />
+        
+        <!-- text input-->
+        <widget name="0"  position="420,114" size="1020,72" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="text" position="465,120" size="990,60" font="Regular;36"  noWrap="1" valign="center" halign="left" transparent="1" zPosition="2" />
+    
+        <!-- select highlights -->
+        <widget name="vkey_text_sel" position="0,0" size="1050,70" alphatest="blend" transparent="1" zPosition="5" />
+        <widget name="vkey_single_sel" position="0,0" size="68,68" alphatest="blend" transparent="1"  zPosition="5" />
+        <widget name="vkey_double_sel" position="0,0" size="140,70" alphatest="blend" transparent="1" zPosition="5" />
+        <widget name="vkey_space_sel" position="0,0" size="560,70" alphatest="blend" transparent="1" zPosition="5" />
+        
+        <!-- keyboard -->
+        <widget name="1" position="450,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_1" position="450,207" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="2" position="518,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_2" position="518,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
 
-<screen name="LanguageListScreen" position="center,center" size="900,760" backgroundColor="#16000000" transparent="0" title="Select Language" >
-<widget name="languageList" position="0,0" size="900,700"  backgroundColor="#3f4450" transparent = "0" scrollbarMode="showOnDemand" />
-<widget name="info" zPosition="2" position="center,710" size="900,40"  transparent="0" noWrap="1" font="Regular;30" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#0f64b2" />
-</screen>
+        <widget name="3" position="586,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_3" position="586,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
 
-<screen name="vkOptionsScreen" position="center,center" size="900,720" backgroundColor="#16000000" transparent="0" title="Addkey" >
-<widget name="menu" position="5,5" size="900,720"  backgroundColor="#3f4450" transparent = "0" />
-</screen>
+        <widget name="4" position="654,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_4" position="654,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="5" position="722,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_5" position="722,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="6" position="790,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_6" position="790,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="7" position="858,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_7" position="858,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="8" position="926,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_8" position="926,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+
+        <widget name="9" position="994,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_9" position="994,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="10" position="1062,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_10" position="1062,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="11" position="1130,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_11" position="1130,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="12" position="1198,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_12" position="1198,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+                
+        <widget name="13" position="1266,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_13" position="1266,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+  
+        <widget name="14" position="1334,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_14" position="1334,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+  
+        <widget name="15" position="1402,207" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_15" position="1402,207" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+       <widget name="vkey_backspace" position="1402,207" size="68,68" alphatest="blend" transparent="1" zPosition="3" /> 
+        
+        <!-- backspace red bar -->
+        <widget name="m_0" position="1411,263" size="50,3" font="Regular;2" foregroundColor="#ed1c24" backgroundColor="#ed1c24" noWrap="1" valign="center" halign="center" zPosition="2" />   
+        
+        <!-- row 2 -->
+        <widget name="16" position="450,275" size="136,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_16" position="450,275" size="136,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="17" position="586,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_17" position="586,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="18" position="654,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_18" position="654,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="19" position="722,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_19" position="722,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="20" position="790,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_20" position="790,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="21" position="858,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_21" position="858,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="22" position="926,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_22" position="926,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+
+        <widget name="23" position="994,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_23" position="994,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="24" position="1062,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_24" position="1062,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="25" position="1130,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_25" position="1130,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="26" position="1198,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_26" position="1198,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+                
+        <widget name="27" position="1266,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_27" position="1266,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+  
+        <widget name="28" position="1334,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_28" position="1334,275" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+  
+        <widget name="29" position="1402,275" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_29" position="1402,275" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="vkey_delete" position="1402,275" size="68,68" alphatest="blend" transparent="1" zPosition="3" /> 
+        
+        <!-- row 3 -->
+        <widget name="30" position="450,343" size="136,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_30" position="450,343" size="136,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="31" position="586,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_31" position="586,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="32" position="654,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_32" position="654,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="33" position="722,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_33" position="722,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="34" position="790,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_34" position="790,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="35" position="858,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_35" position="858,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="36" position="926,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_36" position="926,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+
+        <widget name="37" position="994,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_37" position="994,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="38" position="1062,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_38" position="1062,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="39" position="1130,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_39" position="1130,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="40" position="1198,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_40" position="1198,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+                
+        <widget name="41" position="1266,343" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_41" position="1266,343" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+  
+        <widget name="42" position="1334,343" size="136,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_42" position="1334,343" size="136,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+  
+        <!-- enter green bar -->
+        <widget name="m_1" position="1343,399" size="118,3" font="Regular;2" foregroundColor="#22b14c" backgroundColor="#22b14c"   noWrap="1"  valign="center" halign="center" zPosition="2"/>  
+        
+        <!-- row 4 -->
+        <widget name="43" position="450,411" size="136,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_43" position="450,411" size="136,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="44" position="586,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_44" position="586,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="45" position="654,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_45" position="654,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="46" position="722,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_46" position="722,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="47" position="790,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_47" position="790,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="48" position="858,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_48" position="858,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+        
+        <widget name="49" position="926,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_49" position="926,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+
+        <widget name="50" position="994,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_50" position="994,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="51" position="1062,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_51" position="1062,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="52" position="1130,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_52" position="1130,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />      
+        
+        <widget name="53" position="1198,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_53" position="1198,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+                
+        <widget name="54" position="1266,411" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_54" position="1266,411" size="68,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+  
+        <widget name="55" position="1334,411" size="136,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_55" position="1334,411" size="136,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+         
+        <!-- row 5 -->
+        <widget name="vkey_country" position="518,479" size="68,68" transparent="1" alphatest="blend"  zPosition="1" />
+        
+        <widget name="56" position="450,479" size="136,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_56" position="518,479" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />
+    
+        <widget name="flag" position="461,491" size="60,40" transparent="1" zPosition="2"/>
+        
+        <!-- country yellow bar -->
+        <widget name="m_2" position="459,535" size="118,3" font="Regular;2" foregroundColor="#fff200" backgroundColor="#fff200"   noWrap="1"  valign="center" halign="center" zPosition="2"/>  
+   
+        <widget name="57" position="586,479" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_57" position="586,479" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />       
+
+        <widget name="58" position="654,479" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_58" position="654,479" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <!-- space bar -->
+        <widget name="59" position="722,479" size="544,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_59" position="722,479" size="544,68" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="60" position="1266,479" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_60" position="1266,479" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="61" position="1334,479" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_61" position="1334,479" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="vkey_left" position="1334,479" size="68,68" alphatest="blend" transparent="1" zPosition="3" /> 
+          
+        <widget name="62" position="1402,479" size="68,68" alphatest="blend" transparent="1" zPosition="1" />
+        <widget name="_62" position="1402,479" size="68,68" font="Regular;21" foregroundColor="#ffffff" backgroundColor="#263238" valign="center" halign="center" noWrap="1" transparent="1" zPosition="3" />        
+  
+        <widget name="vkey_right" position="1402,479" size="68,68" alphatest="blend" transparent="1" zPosition="3" /> 
+        <!-- info button -->
+        <ePixmap position="1384,547" size="38,38" pixmap="/usr/share/enigma2/NewVirtualKeyBoard/icons/nvk_hd/key_info.png" alphatest="blend" zPosition="3" />
+
+        <!-- menu button -->
+        <ePixmap position="1432,547" size="38,38" pixmap="/usr/share/enigma2/NewVirtualKeyBoard/icons/nvk_hd/key_menu.png" alphatest="blend" zPosition="3" />
+       
+        <widget name="historyheader" position="90,21" size="339,72" font="Regular;30" foregroundColor="#ffffff" backgroundColor="#3f434f" noWrap="1" valign="center" halign="center"  transparent="0" zPosition="2" />
+        <widget name="historyList" position="90,114" size="339,429" backgroundColor="#3f434f" enableWrapAround="1" itemHeight="39" scrollbarMode="showOnDemand" transparent="0" zPosition="2" />
+          
+        <widget name="suggestionheader" position="1491,21" size="339,72" font="Regular;30" foregroundColor="#ffffff" backgroundColor="#3f434f"  noWrap="1" valign="center" halign="center" transparent="0" zPosition="2" />
+        <widget name="suggestionList" position="1491,114" size="339,429" backgroundColor="#3f434f" enableWrapAround="1" itemHeight="39" scrollbarMode="showOnDemand" transparent="0" zPosition="1" />
+      
+        <eLabel position="450,547" size="882,38" font="Regular;12" text="New Virtual Keyboard - Original code SamSamSam (e2iplayer). Contributors: mfaraj57 (tsmedia) and Fairbird, madmax88 (linuxsat-support). Skin and amends: KiddaC" 
+        foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" />
+    </screen>
+    
+    <screen name="LanguageListScreen" position="center,center" size="900,760" backgroundColor="#16000000" transparent="0" title="Select Language">
+        <widget name="languageList" position="0,0" size="900,700" backgroundColor="#3f4450" transparent="0" scrollbarMode="showOnDemand" />
+        <widget name="info" zPosition="2" position="center,710" size="900,40" transparent="0" noWrap="1" font="Regular;30" valign="center" halign="center" foregroundColor="#ffffff" backgroundColor="#0f64b2" />
+    </screen>
+    
+    <screen name="vkOptionsScreen" position="center,center" size="900,720" backgroundColor="#16000000" transparent="0" title="Addkey">
+        <widget name="menu" position="5,5" size="900,720" backgroundColor="#3f4450" transparent="0" />
+    </screen>
+    
 </skin>

@@ -1,19 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from __future__ import print_function
 import os
-import sys
-from enigma import loadPNG, ePoint, gRGB, eListboxPythonMultiContent, eListbox, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, getDesktop, RT_WRAP
+from enigma import loadPNG, ePoint, gRGB, eListboxPythonMultiContent, eListbox, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, getDesktop, RT_WRAP, getPrevAsciiCode
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import NumberActionMap, ActionMap
-from Components.HTMLComponent import *
+# from Components.HTMLComponent import *
 from Components.GUIComponent import GUIComponent
 from Components.Language import language
 from Components.config import config, ConfigText, ConfigSubsection, ConfigSelection, ConfigYesNo, getConfigListEntry, configfile
 from Components.ConfigList import ConfigListScreen
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest, MultiContentEntryPixmapAlphaBlend
 from Components.Label import Label
 from Components.Input import Input
 from Components.Pixmap import Pixmap
@@ -25,34 +25,35 @@ from sys import version_info
 PY3 = version_info[0] == 3
 
 if PY3:
-	# Python 3
-	compat_str = str
-	from urllib.parse import quote as compat_quote
-	from urllib.request import urlopen as compat_urlopen
+    # Python 3
+    compat_str = str
+    from urllib.parse import quote as compat_quote
+    from urllib.request import urlopen as compat_urlopen
 else:
-	# Python 2
-	compat_str = unicode
-	from urllib import quote as compat_quote
-	from urllib2 import urlopen as compat_urlopen
+    # Python 2
+    compat_str = unicode
+    from urllib import quote as compat_quote
+    from urllib2 import urlopen as compat_urlopen
 
 config.NewVirtualKeyBoard = ConfigSubsection()
 config.NewVirtualKeyBoard.keys_layout = ConfigText(default='', fixed_size=False)
 config.NewVirtualKeyBoard.lastsearchText = ConfigText(default='Enter search word', fixed_size=False)
 config.NewVirtualKeyBoard.firsttime = ConfigYesNo(default=True)
 config.NewVirtualKeyBoard.textinput = ConfigSelection(default='VirtualKeyBoard', choices=[('VirtualKeyBoard', _('Image virtual keyboard')), ('NewVirtualKeyBoard', _('New Virtual Keyboard'))])
+config.NewVirtualKeyBoard.showinplugins = ConfigYesNo(default = True)
 config.NewVirtualKeyBoard.showsuggestion = ConfigYesNo(default=True)
 
 def getDesktopSize():
-	s = getDesktop(0).size()
-	return (s.width(), s.height())
+    s = getDesktop(0).size()
+    return (s.width(), s.height())
 
 def isHD():
-	desktopSize = getDesktopSize()
-	return desktopSize[0] == 1280
+    desktopSize = getDesktopSize()
+    return desktopSize[0] == 1280
 
 def isFHD():
-	desktopSize = getDesktopSize()
-	return desktopSize[0] == 1920
+    desktopSize = getDesktopSize()
+    return desktopSize[0] > 1280
 
 if isFHD():
     skin_xml = '/usr/share/enigma2/NewVirtualKeyBoard/NewVirtualKeyBoardfhd.xml'
@@ -65,18 +66,31 @@ if os.path.exists(skin_xml):
 else:
     print('skin.xml is not present')
 
+# local saved kle layout files
 vkLayoutDir = '/usr/share/enigma2/NewVirtualKeyBoard/kle/'
+
+# external kle layout files
 ServerUrl = 'http://tunisia-dreambox.info/TSplugins/NewVirtualKeyBoard/kle/'
+
+# keyboardlayout website
+# http://kbdlayout.info/
+
+
+# saved search history
 hfile = '/etc/history'
+
 parameters = {}
-kblayout_loading_error='%s kblayout load failed'
+kblayout_loading_error = '%s kblayout load failed'
+
 
 def getLayoutFile(KBLayoutId):
     return vkLayoutDir + '%s.kle' % KBLayoutId
 
+
 def getSLayoutFile(KBLayoutId):
-    file = 'kle%s.kle' % KBLayoutId                    
+    file = 'kle%s.kle' % KBLayoutId
     return ServerUrl + file
+
 
 def pathExists(path):
     if os.path.exists(path):
@@ -84,18 +98,21 @@ def pathExists(path):
     else:
         return False
 
+
 def downloadFile(url, target):
     try:
         response = compat_urlopen(url)
         with open(target, 'wb') as output:
-          output.write(response.read())
+            output.write(response.read())
         return True
     except:
         print("language download error")
         return False
 
+
 def iconsDir(file=''):
     return '/usr/share/enigma2/NewVirtualKeyBoard/icons/' + file
+
 
 class languageSelectionList(GUIComponent, object):
 
@@ -166,15 +183,15 @@ class languageSelectionList(GUIComponent, object):
         width = self.l.getItemSize().width()
         height = self.l.getItemSize().height()
         y = (height - 16) / 2
-        png='/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/gey18.png'
+        png = '/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/grey18.png'
         try:
-            id=str(item['val'][2])
-            if os.path.exists('/usr/share/enigma2/NewVirtualKeyBoard/kle/'+id+".kle"):
-               png='/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/green18.png'
-               res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png)))
+            id = str(item['val'][2])
+            if os.path.exists('/usr/share/enigma2/NewVirtualKeyBoard/kle/' + id + ".kle"):
+                png = '/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/green18.png'
+                res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png)))
             else:
-               png='/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/grey18.png' 
-               res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png)))
+                png = '/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/grey18.png'
+                res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 3, y, 16, 16, loadPNG(png)))
             res.append((eListboxPythonMultiContent.TYPE_TEXT, 40, 0, width - 4, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, str(item['val'][0])))
         except Exception:
             pass
@@ -183,14 +200,15 @@ class languageSelectionList(GUIComponent, object):
     currentIndex = property(getCurrentIndex, moveToIndex)
     currentSelection = property(getCurrent)
 
+
 class KBLayoutLanguages():
 
-    def __init__(self,LoadVKLayout_callback=None):
+    def __init__(self, LoadVKLayout_callback=None):
         self.defaultKBLAYOUT = defaultKBLAYOUT
-        self.KbLayouts=KbLayouts
-        self.KBLayoutId_installed=[]
-        self.LoadVKLayout_callback=LoadVKLayout_callback
-        self.KBsettings=config.NewVirtualKeyBoard
+        self.KbLayouts = KbLayouts
+        self.KBLayoutId_installed = []
+        self.LoadVKLayout_callback = LoadVKLayout_callback
+        self.KBsettings = config.NewVirtualKeyBoard
 
     def GetSystemLang(self, int=False):
         if int:
@@ -206,7 +224,7 @@ class KBLayoutLanguages():
                 defaultLanguage = 'en'
         return defaultLanguage
 
-    def getDefault_KBLayout(self,KBLayoutId=''):
+    def getDefault_KBLayout(self, KBLayoutId=''):
         if KBLayoutId == '':
             e2Locale = GetSystemLang(True)
             langMap = {'pl_PL': '00000415', 'en_EN': '00020409'}
@@ -222,16 +240,15 @@ class KBLayoutLanguages():
                     if item[1].startswith(e2lang):
                         KBLayoutId = item[2]
                         break
-        return KBLayoutId 
+        return KBLayoutId
 
     def saveInstalled_keylayout(self):
-        self.KBLayoutId_installed=[]
+        self.KBLayoutId_installed = []
         path = vkLayoutDir
         try:
             self.KBLayoutId_installed = [f for f in os.listdir(path) if os.path.isfile(f)]
         except:
             self.KBLayoutId_installed = []
-        list1 = []
         if pathExists(path):
             for x in os.listdir(path):
                 item = os.path.join(path, x)
@@ -247,28 +264,25 @@ class KBLayoutLanguages():
 
     def saveActive_keylayout(self, selectedKBLayoutId):
         if selectedKBLayoutId != self.KBsettings.keys_layout.value:
-            self.KBsettings.keys_layout.value =selectedKBLayoutId
+            self.KBsettings.keys_layout.value = selectedKBLayoutId
             self.KBsettings.keys_layout.save()
             configfile.save()
-        self.saveInstalled_keylayout()    
+        self.saveInstalled_keylayout()
         return selectedKBLayoutId
 
     def KeyLayoutExists(self, KBLayoutId):
         path = vkLayoutDir
-        KBLayoutIdPath=path+KBLayoutId+'kle'
         if pathExists(path):
             return True
         else:
             return False
 
     def downloadKBlayout(self, KBLayoutId):
-        ret=downloadFile(getSLayoutFile(KBLayoutId), getLayoutFile(KBLayoutId))
+        ret = downloadFile(getSLayoutFile(KBLayoutId), getLayoutFile(KBLayoutId))
         return ret
 
     def setActive_Layout(self, KBLayoutId):
-        loadErrorMsg = ''
-        loadErrorNo=0
-        loadSuccess=True
+        loadErrorNo = 0
         filePath = vkLayoutDir + '%s.kle' % KBLayoutId
         if KBLayoutId == self.defaultKBLAYOUT['id']:
             self.LoadVKLayout_callback(self.defaultKBLAYOUT)
@@ -289,9 +303,9 @@ class KBLayoutLanguages():
                     self.LoadVKLayout_callback(data)
                     return 0
                 except ImportError as e:
-                    pass
+                    print(e)
             else:
-                    loadErrorNo=2
+                loadErrorNo = 2
             return loadErrorNo
 
     def getKeyboardLayoutItem(self, KBLayoutId):
@@ -300,38 +314,50 @@ class KBLayoutLanguages():
             if KBLayoutId == item[2]:
                 retItem = item
                 break
-        return retItem 
+        return retItem
 
     def getKeyboardLayoutFlag(self, KBLayoutId):
         lang = self.getKeyboardLayoutItem(KBLayoutId)
+
         try:
-            lang = lang[1].split("_")[0]
+            lang = lang[1]
         except:
-            lang = 'noflag'
-        flag = '/usr/share/enigma2/countries/' + lang + '.png'
-        if not pathExists(flag):
-           flag = '/usr/share/enigma2/countries/' +'noflag.png'
+            lang = 'missing'
+
+        if isFHD():
+            flag = '/usr/share/enigma2/NewVirtualKeyBoard/flagshd/' + str(lang) + '.png'
+
+            if not pathExists(flag):
+                flag = '/usr/share/enigma2/NewVirtualKeyBoard/flagshd/missing.png'
+            
+        else:
+            flag = '/usr/share/enigma2/NewVirtualKeyBoard/flags/' + str(lang) + '.png'
+
+            if not pathExists(flag):
+                flag = '/usr/share/enigma2/NewVirtualKeyBoard/flags/missing.png'
+
         return flag
+
 
 class LanguageListScreen(Screen, KBLayoutLanguages):
 
-    def __init__(self, session, listValue=[], selIdx=None,loadVKLayout_callback=None):
+    def __init__(self, session, listValue=[], selIdx=None, loadVKLayout_callback=None):
         Screen.__init__(self, session)
-        self.loadVKLayout_callback=loadVKLayout_callback
+        self.loadVKLayout_callback = loadVKLayout_callback
         KBLayoutLanguages.__init__(self, LoadVKLayout_callback=self.loadVKLayout_callback)
         self.skinName = 'LanguageListScreen'
         self['languageList'] = languageSelectionList()
         self['actions'] = ActionMap(['ColorActions', 'WizardActions'], {
-        'back': self.close,
-        'ok': self.keyok,        
+            'back': self.close,
+            'ok': self.keyok,
         }, -1)
-        self['info']=Label(' ')
+        self['info'] = Label(' ')
         self.languageList = self['languageList']
         self.languageList.onSelectionChanged.append(self.listselectionChanged)
-        self.listselectionChanged=self.languageList.selectionChanged
-        self.listValue=listValue
-        self.selIdx=selIdx
-        self.lastdownloaded_index=None
+        self.listselectionChanged = self.languageList.selectionChanged
+        self.listValue = listValue
+        self.selIdx = selIdx
+        self.lastdownloaded_index = None
         self.onShown.append(self.settitle)
         return
 
@@ -340,20 +366,20 @@ class LanguageListScreen(Screen, KBLayoutLanguages):
         self.showLanguageList()
 
     def listselectionChanged(self):
-        cur=self.languageList.getCurrent()
-        id=cur['val'][2]
-        langFile=vkLayoutDir+str(id)+".kle"
+        cur = self.languageList.getCurrent()
+        id = cur['val'][2]
+        langFile = str(vkLayoutDir) + str(id) + ".kle"
         if pathExists(langFile):
-               self['info'].setText(_('Press ok to remove language'))
+            self['info'].setText(_('Press ok to remove language'))
         else:
-               self['info'].setText(_('Press ok to install language')) 
+            self['info'].setText(_('Press ok to install language'))
 
-    def showLanguageList(self,index=None):
+    def showLanguageList(self, index=None):
         self.languageList.setList(self.listValue)
         self.languageList.setSelectionState(True)
-        if index!=None:
+        if index is not None:
             self.languageList.moveToIndex(index)
-        elif self.selIdx != None:
+        elif self.selIdx is not None:
             self.languageList.moveToIndex(self.selIdx)
         else:
             self.languageList.moveToIndex(0)
@@ -362,35 +388,37 @@ class LanguageListScreen(Screen, KBLayoutLanguages):
 
     def keyok(self):
         index = self.languageList.getCurrentIndex()
-        cur=self.languageList.getCurrent()
-        KBLayoutId=cur['val'][2]
-        langFile=vkLayoutDir+str(KBLayoutId)+".kle"
+        cur = self.languageList.getCurrent()
+        KBLayoutId = cur['val'][2]
+        langFile = str(vkLayoutDir) + str(KBLayoutId) + ".kle"
         if pathExists(langFile):
-               os.remove(langFile)
-               self.showLanguageList(index)
-               self['info'].setText(_('Language removed from installed package'))
-               activeKBLayoutId=self.getActive_keylayout()
-               if activeKBLayoutId==KBLayoutId:
-                  KBLayoutId=self.getDefault_KBLayout()
-               else:
-                  KBLayoutId=activeKBLayoutId 
-               self.setActive_Layout(KBLayoutId)    
-        else: 
-               index = self.languageList.getCurrentIndex()
-               ret=self.downloadKBlayout(KBLayoutId)
-               if ret:
-                   self.showLanguageList(index)
-                   self['info'].setText(_('Language downloaded successfully ,exit to install'))
-                   self.setActive_Layout(KBLayoutId)
-               else:
-                   self['info'].setText(_('Failed to download language,try later'))
+            os.remove(langFile)
+            self.showLanguageList(index)
+            self['info'].setText(_('Language removed from installed package'))
+            activeKBLayoutId = self.getActive_keylayout()
+            if activeKBLayoutId == KBLayoutId:
+                KBLayoutId = self.getDefault_KBLayout()
+            else:
+                KBLayoutId = activeKBLayoutId
+                self.setActive_Layout(KBLayoutId)
+        else:
+            index = self.languageList.getCurrentIndex()
+            ret = self.downloadKBlayout(KBLayoutId)
+            if ret:
+                self.showLanguageList(index)
+                self['info'].setText(_('Language downloaded successfully ,exit to install'))
+                self.setActive_Layout(KBLayoutId)
+            else:
+                self['info'].setText(_('Failed to download language,try later'))
 
     def exit(self):
         self.close()
 
+
 class eConnectCallbackObj:
     OBJ_ID = 0
     OBJ_NUM = 0
+
     def __init__(self, obj=None, connectHandler=None):
         eConnectCallbackObj.OBJ_ID += 1
         eConnectCallbackObj.OBJ_NUM += 1
@@ -413,7 +441,8 @@ class eConnectCallbackObj:
         self.connectHandler = None
         self.obj = None
 
-def eConnectCallback(obj, callbackFun, withExcept = False):
+
+def eConnectCallback(obj, callbackFun, withExcept=False):
     try:
         if 'connect' in dir(obj):
             return eConnectCallbackObj(obj, obj.connect(callbackFun))
@@ -426,9 +455,13 @@ def eConnectCallback(obj, callbackFun, withExcept = False):
         pass
     return eConnectCallbackObj()
 
+
 def TranslateTXT(txt):
     return txt
+
+
 _ = TranslateTXT
+
 
 def mkdirs(newdir, raiseException=False):
     try:
@@ -448,6 +481,7 @@ def mkdirs(newdir, raiseException=False):
             raise e
     return False
 
+
 def GetSystemLang(int=False):
     if int:
         try:
@@ -462,6 +496,7 @@ def GetSystemLang(int=False):
 
     return defaultLanguage
 
+
 class textINput(Input):
 
     def __init__(self, *args, **kwargs):
@@ -470,17 +505,20 @@ class textINput(Input):
         return
 
     def timeout(self, *args, **kwargs):
+        """
         callCallback = False
         try:
             callCallback = True if self.lastKey != -1 else False
         except Exception:
             pass
+            """
         try:
             Input.timeout(self, *args, **kwargs)
         except Exception:
             pass
         if self.nvkTimeoutCallback:
             self.nvkTimeoutCallback()
+
 
 class textInputSuggestions():
 
@@ -502,12 +540,7 @@ class textInputSuggestions():
         self.callback([])
 
     def parseGoogleData(self, output):
-        charsetCode = {'ar': 'windows-1256',
-         'ky': 'windows-1251',
-         'ru': 'windows-1251',
-         'el': 'windows-1253',
-         'tr': 'windows-1254',
-         'fa': 'windows-1256'}
+        charsetCode = {'ar': 'windows-1256', 'ky': 'windows-1251', 'ru': 'windows-1251', 'el': 'windows-1253', 'tr': 'windows-1254', 'fa': 'windows-1256'}
         try:
             if output:
                 data = output
@@ -515,14 +548,14 @@ class textInputSuggestions():
                 if charset:
                     try:
                         data = data.decode(charset)
-                        #data = str(data.decode(charset)).encode('utf-8') # py2
+                        # data = str(data.decode(charset)).encode('utf-8') # py2
                     except:
                         pass
                 else:
                     if PY3:
-                    	data = data.decode("utf-8")
+                        data = data.decode("utf-8")
                     else:
-                    	data = data.encode("utf-8")
+                        data = data.encode("utf-8")
                 list = data.split(',')
                 data2 = []
                 for item in list:
@@ -532,7 +565,7 @@ class textInputSuggestions():
                 self.setGoogleSuggestions(data2)
             else:
                 self.callback([])
-        except:               
+        except:
             pass
         return
 
@@ -543,7 +576,7 @@ class textInputSuggestions():
         from twisted.internet import reactor
         from twisted.web.client import getPage
         self.reactor = reactor
-        if queryString!='':
+        if queryString:
             query = self.prepQuerry + compat_quote(queryString)
             url = 'http://www.google.com' + query
             url = 'http://suggestqueries.google.com/complete/search?output=firefox&hl=%s&gl=%s%s&q=%s' % (self.hl, self.hl, '&ds=yt' if True else '', compat_quote(queryString))
@@ -563,12 +596,12 @@ class textInputSuggestions():
                 word = word.lower().strip()
                 for line in lines:
                     line = line.strip()
-                    if line !='':
+                    if line != '':
                         if line.startswith(word):
                             list1.insert(0, line)
                         else:
                             list1.append(line)
-            if not word or word.strip()=='':
+            if not word or word.strip() == '':
                 for line in lines:
                     line = line.strip()
                     list1.append(line)
@@ -586,7 +619,7 @@ class textInputSuggestions():
             txt = txt.strip()
             if txt == '':
                 return
-            if os.path.exists(hfile) == False:
+            if os.path.exists(hfile) is False:
                 f = open(hfile, 'w')
                 f.write(txt)
                 f.close()
@@ -602,6 +635,7 @@ class textInputSuggestions():
         except:
             print('error writing to history')
 
+
 class selectList(GUIComponent, object):
 
     def __init__(self):
@@ -610,13 +644,13 @@ class selectList(GUIComponent, object):
         self.l.setBuildFunc(self.buildEntry)
         self.onSelectionChanged = []
         if isFHD():
-            fontSize = 32
-            itemHeight = 54
+            fontSize = 30
+            itemHeight = 39
         else:
-            fontSize = 24
-            itemHeight = 46
+            fontSize = 20
+            itemHeight = 26
         self.font = ('Regular', fontSize, itemHeight, 0)
-        self.l.setFont(0, gFont('Regular', 60))
+        self.l.setFont(0, gFont('Regular', fontSize))
         self.l.setFont(1, gFont(self.font[0], self.font[1]))
         self.l.setItemHeight(self.font[2])
         self.dictPIX = {}
@@ -670,14 +704,24 @@ class selectList(GUIComponent, object):
         res = [None]
         width = self.l.getItemSize().width()
         height = self.l.getItemSize().height()
-        try:
-            res.append((eListboxPythonMultiContent.TYPE_TEXT, 4, 0, width - 4, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, item))
-        except Exception:
-            pass
-        return res
+        
+        if isFHD():
+            try:
+                res.append((eListboxPythonMultiContent.TYPE_TEXT, 21, 0, width - 42, height, 1, RT_HALIGN_LEFT|RT_VALIGN_CENTER, item))
+            except Exception:
+                pass
+            return res
+        else:
+            try:
+                res.append((eListboxPythonMultiContent.TYPE_TEXT, 14, 0, width - 28, height, 1, RT_HALIGN_LEFT|RT_VALIGN_CENTER, item))
+            except Exception:
+                pass
+            return res  
+               
     GUI_WIDGET = eListbox
     currentIndex = property(getCurrentIndex, moveToIndex)
     currentSelection = property(getCurrent)
+
 
 class createPixmap(Pixmap):
 
@@ -687,6 +731,7 @@ class createPixmap(Pixmap):
 
     def setPixmap(self, ptr):
         self.instance.setPixmap(ptr)
+
 
 class kb_layoutComponent:
 
@@ -720,8 +765,11 @@ class kb_layoutComponent:
         for i in range(1, 63):
             self['_%s' % i] = Label(' ')
 
-        for m in range(6):
+
+        for m in range(3):
             self['m_%d' % m] = Label(' ')
+
+            
         self.keys_pixmapMap = SkeysMap
         self.markerMap = markerMap
         self.colMax = len(self.keyidMap[0])
@@ -730,6 +778,7 @@ class kb_layoutComponent:
         self.colIdx = 0
         self.colors = colors
         self.specialKeyState = self.SK_NONE
+
 
 class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLayoutLanguages):
 
@@ -740,7 +789,6 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         KBLayoutLanguages.__init__(self, LoadVKLayout_callback=self.loadVKLayout)
         self.createKID()
         self.drawKeyMap()
-        lastSearchedText=''
         self.KBsettings = config.NewVirtualKeyBoard
         if text.strip() == '':
             text = self.KBsettings.lastsearchText.value
@@ -748,9 +796,9 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             self.showsuggestion = self.KBsettings.showsuggestion.value
         except:
             self.showsuggestion = True
-        self.showHistory=self.showsuggestion
-        self.showHistory=self.showsuggestion
-        self.googleSuggestionList=[]
+        self.showHistory = self.showsuggestion
+        self.showHistory = self.showsuggestion
+        self.googleSuggestionList = []
         self.skinName = 'NewVirtualKeyBoard'
         Screen.__init__(self, session)
         textInputSuggestions.__init__(self, callback=self.setGoogleSuggestions)
@@ -774,14 +822,14 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self.currentVKLayout = self.defaultKBLAYOUT
         self.selectedKBLayoutId = self.KBsettings.keys_layout.value
         if PY3:
-        	self.emptykey = ''
+            self.emptykey = ''
         else:
-        	self.emptykey = u''
+            self.emptykey = u''
         self.vkRequestedId = ''
         self.focus = self.keyboard_hasfocus
 
     def getActionMap(self):
-        return NumberActionMap(['WizardActions', 'DirectionActions', 'ColorActions', 'KeyboardInputActions', 'InputBoxActions', 'InputAsciiActions', 'SetupActions', 'MenuActions',], {
+        return NumberActionMap(['WizardActions', 'DirectionActions', 'ColorActions', 'KeyboardInputActions', 'InputBoxActions', 'InputAsciiActions', 'SetupActions', 'MenuActions'], {
             'gotAsciiCode': self.keyGotAscii,
             'ok': self.keyOK,
             'ok_repeat': self.keyOK,
@@ -794,10 +842,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             'red_repeat': self.keyRed,
             'green': self.keyGreen,
             'yellow': self.switchinstalledvklayout,
-            'blue': self.togglesfocus,            
+            'blue': self.togglesfocus,
             'deleteBackward': self.backClicked,
             'deleteForward': self.forwardClicked,
-            'pageUp': self.insertSpace,            
+            'pageUp': self.insertSpace,
             'menu': self.listmenuoptions,
             'info': self.showHelp,
             'pageDown': self.clearText,
@@ -811,7 +859,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             '8': self.keyNumberGlobal,
             '9': self.keyNumberGlobal,
             '0': self.keyNumberGlobal,
-            }, -2)
+        }, -2)
 
     def onWindowShow(self):
         self.searchHistoryList = self.displaySearchHistory()
@@ -822,13 +870,13 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self['historyList'].setSelectionState(False)
         self['historyheader'].setText('Search history')
         self['suggestionList'].setSelectionState(False)
-        self['suggestionheader'].setText('Google suggestion')
+        self['suggestionheader'].setText('Google suggestions')
         self.setSuggestionVisible()
         self.isshowsuggestionEnabled = self.showsuggestion
         self.setText(self.startText)
         self.loadKBLayout()
-        if self.KBsettings.firsttime.value==True:
-            self.KBsettings.firsttime.value=False
+        if self.KBsettings.firsttime.value is True:
+            self.KBsettings.firsttime.value = False
             self.KBsettings.firsttime.save()
             self.showHelp()
 
@@ -865,9 +913,9 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self['text'].setText(text)
         self['text'].right()
         if PY3:
-        	self['text'].currPos = len(text) 
+            self['text'].currPos = len(text)
         else:
-        	self['text'].currPos = len(text.decode('utf-8'))
+            self['text'].currPos = len(text.decode('utf-8'))
         self['text'].right()
         self.input_updated()
 
@@ -875,13 +923,15 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self.onLayoutFinish.remove(self.loadKBpixmaps)
         self['text'].nvkTimeoutCallback = self.input_updated
         for i in range(0, 63):
-            key = self.keys_pixmapMap.get(str(i), 'k')
+            key = self.keys_pixmapMap.get(str(i), 'vkey_single')
             self[str(i)].setPixmap(self.keys_pixmap[key])
-        for key in ['tmkey', 'mkey', 'mmkey', 'lmkey']:
+        for key in ['vkey_text_sel', 'vkey_single_sel', 'vkey_double_sel', 'vkey_space_sel']:
             self[key].hide()
             self[key].setPixmap(self.keys_pixmap[key])
-        self['b'].setPixmap(self.keys_pixmap['b'])
-        self['l'].setPixmap(self.keys_pixmap['l'])
+        self['vkey_backspace'].setPixmap(self.keys_pixmap['vkey_backspace'])
+        self['vkey_delete'].setPixmap(self.keys_pixmap['vkey_delete'])
+        self['vkey_left'].setPixmap(self.keys_pixmap['vkey_left'])
+        self['vkey_right'].setPixmap(self.keys_pixmap['vkey_right'])
         self.currentKeyId = self.keyidMap[self.rowIdx][self.colIdx]
         self.move_KMarker(-1, self.currentKeyId)
         self.showSpecialText()
@@ -889,7 +939,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
     def showSpecialText(self):
         self['_1'].setText('Esc')
         self['_16'].setText(_('Clear'))
-        self['_29'].setText('Del')
+        # self['_29'].setText('Del')
         self['_30'].setText('Caps')
         self['_42'].setText('Enter')
         self['_43'].setText('Shift')
@@ -897,12 +947,15 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self['_57'].setText('Ctrl')
         self['_58'].setText('Alt')
         self['_60'].setText('Alt')
+        
+        """
         if PY3:
-        	self['_61'].setText('\u2190')
-        	self['_62'].setText('\u2192')
+            self['_61'].setText('\u2190')
+            self['_62'].setText('\u2192')
         else:
-        	self['_61'].setText(u'\u2190'.encode('utf-8'))
-        	self['_62'].setText(u'\u2192'.encode('utf-8'))
+            self['_61'].setText('\u2190'.encode('utf-8'))
+            self['_62'].setText('\u2192'.encode('utf-8'))
+            """
 
     def processArrowKey(self, dx=0, dy=0):
         oldKeyId = self.keyidMap[self.rowIdx][self.colIdx]
@@ -947,24 +1000,24 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
                     break
             if maxKeyX - minKeyX > 2:
                 if PY3:
-                	self.colIdx = int((maxKeyX + minKeyX) / 2)
+                    self.colIdx = int((maxKeyX + minKeyX) / 2)
                 else:
-                	self.colIdx = (maxKeyX + minKeyX) / 2
+                    self.colIdx = (maxKeyX + minKeyX) / 2
         self.currentKeyId = self.keyidMap[self.rowIdx][self.colIdx]
         self.move_KMarker(oldKeyId, self.currentKeyId)
 
     def move_KMarker(self, oldKeyId, newKeyId):
         if oldKeyId == -1 and newKeyId == -1:
-            for key in ['tmkey', 'mkey', 'mmkey', 'lmkey']:
+            for key in ['vkey_text_sel', 'vkey_single_sel', 'vkey_double_sel', 'vkey_space_sel']:
                 self[key].hide()
             return
         if oldKeyId != -1:
             keyid = str(oldKeyId)
-            marker = self.markerMap.get(keyid, 'mkey')
+            marker = self.markerMap.get(keyid, 'vkey_single_sel')
             self[marker].hide()
         if newKeyId != -1:
             keyid = str(newKeyId)
-            marker = self.markerMap.get(keyid, 'mkey')
+            marker = self.markerMap.get(keyid, 'vkey_single_sel')
             self[marker].instance.move(ePoint(self[keyid].position[0], self[keyid].position[1]))
             self[marker].show()
 
@@ -974,12 +1027,12 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         if keyid == 1:
             if self.emptykey:
                 if PY3:
-                	self.emptykey = ''
+                    self.emptykey = ''
                 else:
-                	self.emptykey = u''
+                    self.emptykey = u''
                 self.updateKsText()
             else:
-               self.close(None)
+                self.close(None)
             return
         elif keyid == 15:
             self['text'].deleteBackward()
@@ -1006,15 +1059,15 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         elif keyid == 42:
             try:
                 if PY3:
-                	text = self['text'].getText()
+                    text = self['text'].getText()
                 else:
-                	text = self['text'].getText().decode('UTF-8').encode('UTF-8')
+                    text = self['text'].getText().decode('UTF-8').encode('UTF-8')
             except Exception:
                 text = ''
                 pass
-            if  text.strip() !='':
+            if text.strip() != '':
                 self.saveSearchHistory(text)
-                self.KBsettings.lastsearchText.value=text
+                self.KBsettings.lastsearchText.value = text
                 self.KBsettings.lastsearchText.save()
             self.close(text)
             return
@@ -1042,9 +1095,9 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             updateKsText = False
             ret = 0
             if PY3:
-            	text = ''
+                text = ''
             else:
-            	text = u''
+                text = u''
             val = self.getKeyChar(keyid)
             if val:
                 for special in [(self.SK_CTRL, [57]), (self.SK_ALT, [58, 60]), (self.SK_SHIFT, [43, 55])]:
@@ -1083,7 +1136,6 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             self.KBLayoutId_installed = [f for f in os.listdir(path) if os.path.isfile(f)]
         except:
             self.KBLayoutId_installed = []
-        list1 = []
         if os.path.exists(path):
             for x in os.listdir(path):
                 item = os.path.join(path, x)
@@ -1107,7 +1159,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             pass
 
     def getKeyboardLayout(self, KBLayoutId):
-        ret=self.setActive_Layout( KBLayoutId)
+        ret = self.setActive_Layout(KBLayoutId)
         if ret == 1:
             vkLayoutItem = self.getKeyboardLayoutItem(KBLayoutId)
             self.session.open(MessageBox, text=_(kblayout_loading_error) % vkLayoutItem[0], type=MessageBox.TYPE_ERROR)
@@ -1117,20 +1169,20 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             if not success:
                 self.loadVKLayout(self.defaultKBLAYOUT)
         self.displayActiveLayoutFlag(KBLayoutId)
-                         
+
     def displayActiveLayoutFlag(self, KBLayoutId):
-        flag=self.getKeyboardLayoutFlag(KBLayoutId)
+        flag = self.getKeyboardLayoutFlag(KBLayoutId)
         self['flag'].instance.setPixmapFromFile(flag)
-        self['flag'].instance.show()                         
+        self['flag'].instance.show()
 
     def loadVKLayout(self, layout=None):
-        if layout != None:
+        if layout:
             self.currentVKLayout = layout
         self.updateKsText()
         if PY3:
-        	self['_56'].setText(self.currentVKLayout['locale'].split('-', 1)[0].upper())
+            self['_56'].setText(self.currentVKLayout['locale'].split('-', 1)[0].upper())
         else:
-        	self['_56'].setText(self.currentVKLayout['locale'].encode('UTF-8').split('-', 1)[0].upper())
+            self['_56'].setText(self.currentVKLayout['locale'].encode('UTF-8').split('-', 1)[0].upper())
         self['_56'].show()
 
     def updateSKey(self, keysidTab, state):
@@ -1150,9 +1202,9 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             val = key[state]
         else:
             if PY3:
-            	val = ''
+                val = ''
             else:
-            	val = u''
+                val = u''
         return val
 
     def updateNormalKText(self, keyid):
@@ -1172,9 +1224,9 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         skinKey = self['_%s' % keyid]
         skinKey.instance.setForegroundColor(color)
         if PY3:
-        	skinKey.setText(val)
+            skinKey.setText(val)
         else:
-        	skinKey.setText(val.encode('utf-8'))
+            skinKey.setText(val.encode('utf-8'))
 
     def updateKsText(self):
         for rangeItem in [(2, 14), (17, 28), (31, 41), (44, 54), (59, 59)]:
@@ -1206,37 +1258,37 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             else:
                 sel = False
             listValue.append(({'sel': sel, 'val': x}, ))
-        try:    
-         self.session.openWithCallback(self.languageSelectionBack, LanguageListScreen, listValue, selIdx, self.loadVKLayout)
+        try:
+            self.session.openWithCallback(self.languageSelectionBack, LanguageListScreen, listValue, selIdx, self.loadVKLayout)
         except:
-               print ("error")
+            print ("switchToLanguageSelection error")
         return
-      
-    def languageSelectionBack(self,index=None):
+
+    def languageSelectionBack(self, index=None):
         self.selectedKBLayoutId = self.getActive_keylayout()
         self.getKeyboardLayout(self.selectedKBLayoutId)
         self.switchToKayboard()
-          
+
     def togglesfocus(self):
-        if self.showsuggestion == False:
+        if self.showsuggestion is False:
             return
-        if self.focus == self.keyboard_hasfocus and  self.googleSuggestionList!=[]:
-                 self.switchToGoogleSuggestions()
-        elif  self.focus == self.keyboard_hasfocus and  self.googleSuggestionList==[] and self.searchHistoryList!=[]:
-                 self.switchToSearchHistory() 
-        elif self.focus == self.suggestion_hasfocus and   self.searchHistoryList!=[]:
-                 self.switchToSearchHistory()
-        elif self.focus == self.suggestion_hasfocus and   self.searchHistoryList==[] and self.googleSuggestionList!=[] :
-                 self.switchToGoogleSuggestions()          
+        if self.focus == self.keyboard_hasfocus and self.googleSuggestionList != []:
+            self.switchToGoogleSuggestions()
+        elif self.focus == self.keyboard_hasfocus and self.googleSuggestionList == [] and self.searchHistoryList != []:
+            self.switchToSearchHistory()
+        elif self.focus == self.suggestion_hasfocus and self.searchHistoryList != []:
+            self.switchToSearchHistory()
+        elif self.focus == self.suggestion_hasfocus and self.searchHistoryList == [] and self.googleSuggestionList != []:
+            self.switchToGoogleSuggestions()
         elif self.focus == self.history_hasfocus:
-                 self.switchToKayboard()
+            self.switchToKayboard()
 
     def switchToKayboard(self):
         self.setFocus(self.keyboard_hasfocus)
         self.move_KMarker(-1, self.currentKeyId)
 
     def switchToGoogleSuggestions(self):
-        if self.showsuggestion == True:
+        if self.showsuggestion is True:
             self.setFocus(self.suggestion_hasfocus)
             self['suggestionList'].moveToIndex(0)
             self['suggestionList'].setSelectionState(True)
@@ -1244,7 +1296,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
             self.switchToKayboard()
 
     def switchToSearchHistory(self):
-        if self.showsuggestion == True:
+        if self.showsuggestion is True:
             self.setFocus(self.history_hasfocus)
             self['historyList'].moveToIndex(0)
             self['historyList'].setSelectionState(True)
@@ -1301,12 +1353,12 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         if self.focus == self.keyboard_hasfocus:
             if self.emptykey:
                 if PY3:
-                	self.emptykey = ''
+                    self.emptykey = ''
                 else:
-                	self.emptykey = u''
+                    self.emptykey = u''
                 self.updateKsText()
             else:
-                self.saveActive_keylayout(self.selectedKBLayoutId) 
+                self.saveActive_keylayout(self.selectedKBLayoutId)
                 self.close(None)
         elif self.focus in (self.suggestion_hasfocus, self.history_hasfocus):
             self.switchToKayboard()
@@ -1358,10 +1410,10 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
                 self.processArrowKey(-1, 0)
         elif self.focus == self.keyboard_hasfocus:
             if self.currentKeyId in self.LEFT_KEYS or self.currentKeyId == 0 and self['text'].currPos == 0:
-                if self.showHistory and self.showsuggestion == True:
+                if self.showHistory and self.showsuggestion is True:
                     self.switchToSearchHistory()
                     return
-                if self.showsuggestion == True:
+                if self.showsuggestion is True:
                     self.switchToGoogleSuggestions()
                     return
             if self.currentKeyId == 0:
@@ -1437,7 +1489,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
                 pass
 
     def setSuggestionVisible(self):
-        if self.showsuggestion == True:
+        if self.showsuggestion is True:
             self['suggestionheader'].show()
             self['suggestionList'].show()
             self['historyheader'].show()
@@ -1487,7 +1539,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self.getGoogleSuggestions(word, hl=lang)
 
     def setGoogleSuggestions(self, list=[]):
-        self.googleSuggestionList=list
+        self.googleSuggestionList = list
         if list:
             self['suggestionList'].setList([(x, ) for x in list])
         self.setSuggestionVisible()
@@ -1496,7 +1548,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
 
         def getmenuData():
             menuData = []
-            menuData.append((0, 'Install language', 'flag'))           
+            menuData.append((0, 'Install language', 'flag'))
             menuData.append((1, 'Clear history', 'history'))
             menuData.append((2, 'Settings', 'settings'))
             return menuData
@@ -1513,27 +1565,28 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self.session.openWithCallback(optionsback, vkOptionsScreen, _('select task'), getmenuData())
         return
 
-    def settings_back(self,result=None):
+    def settings_back(self, result=None):
         if result:
-            self.showsuggestion=self.KBsettings.showsuggestion.value   
+            self.showsuggestion = self.KBsettings.showsuggestion.value
             self.setSuggestionVisible()
-        
+
     def showHelp(self):
 
         def getmenuData():
             menuData = []
-            menuData.append((0, 'Switch language-yellow button', 'yellow'))
-            menuData.append((1, 'Insert space-pageup button', 'pageup'))
-            menuData.append((2, 'Clear input text-pagedown button', 'pagedown'))           
-            menuData.append((3, 'Toggle focus between suggestion,history,blue button', 'blue'))
-            menuData.append((4, 'Show more functions-Installed language...', 'menu'))
-            menuData.append((5, 'Show this screen again', 'info'))
+            menuData.append((0, 'Yellow - Switch language', 'key_yellow'))
+            menuData.append((1, 'Blue - Toggle focus between suggestions & keyboard', 'key_blue'))
+            menuData.append((2, 'Menu - Show more functions - Install languages...', 'key_menu'))
+            menuData.append((3, 'Info - Show this screen again', 'key_info'))
+            menuData.append((4, 'Page Up - Insert space', 'key_plus'))
+            menuData.append((5, 'Page Down - Clear input text', 'key_minus'))
             return menuData
 
         def optionsback(index=None):
             return
         self.session.openWithCallback(optionsback, vkOptionsScreen, _('Help'), getmenuData())
         return
+
 
 class vkOptionsScreen(Screen):
 
@@ -1542,9 +1595,8 @@ class vkOptionsScreen(Screen):
         self.skinName = 'vkOptionsScreen'
         self['menu'] = MenuList([], enableWrapAround=True, content=eListboxPythonMultiContent)
         self['actions'] = ActionMap(['ColorActions', 'WizardActions'], {
-        'back': self.close,
-        'ok': self.exit,
-        'back': self.close
+            'back': self.close,
+            'ok': self.exit
         }, -1)
         self.settitle(title, datalist)
 
@@ -1559,99 +1611,107 @@ class vkOptionsScreen(Screen):
     def showmenulist(self, datalist):
         cbcolor = 16753920
         cccolor = 15657130
-        cdcolor = 16711680
-        cecolor = 16729344
-        cfcolor = 65407
-        cgcolor = 11403055
-        chcolor = 13047173
-        cicolor = 13789470
         scolor = cbcolor
         res = []
         menulist = []
         if isHD():
-            self['menu'].l.setItemHeight(50)
-            self['menu'].l.setFont(0, gFont('Regular', 28))
+            self['menu'].l.setItemHeight(48)
+            self['menu'].l.setFont(0, gFont('Regular', 20))
         else:
-            self['menu'].l.setItemHeight(75)
-            self['menu'].l.setFont(0, gFont('Regular', 42))
+            self['menu'].l.setItemHeight(72)
+            self['menu'].l.setFont(0, gFont('Regular', 30))
         for i in range(0, len(datalist)):
             txt = datalist[i][1]
             if isHD():
-                png = os.path.join('/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd40/%s.png' % datalist[i][2])
+                png = os.path.join('/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/hd/%s.png' % datalist[i][2])
             else:
-                png = os.path.join('/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/fhd75/%s.png' % datalist[i][2])
+                png = os.path.join('/usr/share/enigma2/NewVirtualKeyBoard/icons/menus/fhd/%s.png' % datalist[i][2])
             res.append(MultiContentEntryText(pos=(0, 1), size=(0, 0), font=0, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER | RT_WRAP, text='', color=scolor, color_sel=cccolor, border_width=3, border_color=806544))
             if isHD():
-                res.append(MultiContentEntryText(pos=(60, 1), size=(723, 50), font=0, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER | RT_WRAP, text=str(txt), color=16777215, color_sel=16777215))
-                res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(png)))
+                res.append(MultiContentEntryText(pos=(60, 0), size=(723, 48), font=0, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER | RT_WRAP, text=str(txt), color=16777215, color_sel=16777215))
+                res.append(MultiContentEntryPixmapAlphaBlend(pos=(20, 12), size=(25, 25), png=loadPNG(png)))
             else:
-                res.append(MultiContentEntryText(pos=(100, 1), size=(1080, 75), font=0, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER | RT_WRAP, text=str(txt), color=16777215, color_sel=16777215))
-                res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(75, 75), png=loadPNG(png)))
+                res.append(MultiContentEntryText(pos=(100, 0), size=(1080, 72), font=0, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER | RT_WRAP, text=str(txt), color=16777215, color_sel=16777215))
+                res.append(MultiContentEntryPixmapAlphaBlend(pos=(30, 17), size=(38, 38), png=loadPNG(png)))
             menulist.append(res)
             res = []
         self['menu'].l.setList(menulist)
         self['menu'].show()
 
-class nvKeyboardSetup(ConfigListScreen, Screen):
-    swidth=getDesktop(0).size().width()
-    if isFHD():
-        skin='''
-        <screen name="nvKeyboardSetu" position="center,center" size="1080,540" backgroundColor="#16000000" title="New Virtual Keyboard  Settings">
-            <ePixmap position="118,482" size="38,38" pixmap="~/images/red.png" zPosition="3" transparent="1" alphatest="blend" />
-            <ePixmap position="424,482" size="38,38" pixmap="~/images/green.png" zPosition="3" transparent="1" alphatest="blend" />
-            <ePixmap position="724,482" size="38,38" pixmap="~/images/blue.png" zPosition="3" transparent="1" alphatest="blend" />
-            <eLabel position="60,468" zPosition="4" size="300,36" halign="center" font="Regular;33" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
-            <eLabel position="368,468" zPosition="4" size="300,36" halign="center" font="Regular;33" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
-            <eLabel position="735,468" zPosition="4" size="300,36" halign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard " />
-            <widget name="config" position="30,75" size="1050,480" itemHeight="45" font="Regular;36" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
-        </screen>'''
-    else:
-        skin='''
-        <screen name="nvKeyboardSetu" position="center,center" size="719,360" backgroundColor="#16000000" title="New Virtual Keyboard  Settings">
-            <ePixmap position="79,321" size="25,25" pixmap="~/images/red.png" zPosition="3" transparent="1" alphatest="blend" />
-            <ePixmap position="282,321" size="25,25" pixmap="~/images/green.png" zPosition="3" transparent="1" alphatest="blend" />
-            <ePixmap position="482,321" size="25,25" pixmap="~/images/blue.png" zPosition="3" transparent="1" alphatest="blend" />
-            <eLabel position="40,322" zPosition="4" size="200,24" halign="center" font="Regular;22" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
-            <eLabel position="245,322" zPosition="4" size="200,24" halign="center" font="Regular;22" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
-            <eLabel position="490,322" zPosition="4" size="200,24" halign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard " />
-            <widget name="config" position="20,50" size="699,320" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
-        </screen>'''
 
-    def __init__(self, session,fromkeyboard=False):
+class nvKeyboardSetup(ConfigListScreen, Screen):
+    swidth = getDesktop(0).size().width()
+    if isFHD():
+        skin = """
+        	<screen name="nvKeyboardSetup" position="center,center" size="1080,280" backgroundColor="#16000000" title="New Virtual Keyboard Settings">
+            	<widget name="config" position="30,30" size="1020,130" itemHeight="45" font="Regular;30" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
+            
+            	<ePixmap position="30,220" size="38,38" pixmap="~/images/key_red.png" zPosition="3" transparent="1" alphatest="blend" />
+             	<eLabel position="78,220" zPosition="4" size="300,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
+             
+            	<ePixmap position="330,220" size="38,38" pixmap="~/images/key_green.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="378,220" zPosition="4" size="300,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
+            
+            	<ePixmap position="630,220" size="38,38" pixmap="~/images/key_yellow.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="678,220" zPosition="4" size="420,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard" />
+        	</screen>"""
+    else:
+        skin = """
+        	<screen name="nvKeyboardSetup" position="center,center" size="720,160" backgroundColor="#16000000" title="New Virtual Keyboard Settings">
+            	<widget name="config" position="20,20" size="680,320" itemHeight="30" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
+                    
+            	<ePixmap position="20,120" size="25,25" pixmap="~/images/key_red_sd.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="52,120" zPosition="4" size="200,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
+                        
+            	<ePixmap position="220,120" size="25,25" pixmap="~/images/key_green_sd.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="252,120" zPosition="4" size="200,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
+             
+            	<ePixmap position="420,120" size="25,25" pixmap="~/images/key_yellow_sd.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="452,120" zPosition="4" size="280,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard" />
+        	</screen>"""
+
+    def __init__(self, session, fromkeyboard=False):
         Screen.__init__(self, session)
-        self.list = []
         self.list = []
         py_link = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.py")
         if not os.path.islink(py_link):
-           config.NewVirtualKeyBoard.textinput.value="VirtualKeyBoard"
-           config.NewVirtualKeyBoard.textinput.save()
+            config.NewVirtualKeyBoard.textinput.value = "VirtualKeyBoard"
+            config.NewVirtualKeyBoard.textinput.save()
         else:
-           config.NewVirtualKeyBoard.textinput.value="NewVirtualKeyBoard"
-           config.NewVirtualKeyBoard.textinput.save()
+            config.NewVirtualKeyBoard.textinput.value = "NewVirtualKeyBoard"
+            config.NewVirtualKeyBoard.textinput.save()
         self.skin_path = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/NewVirtualKeyBoard")
-        self.fromkeyboard=fromkeyboard
-        self['config']=MenuList([])
+        self.fromkeyboard = fromkeyboard
+        self['config'] = MenuList([])
         ConfigListScreen.__init__(self, self.list, session=session, on_change=self.changedEntry)
-        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions'], {'green': self.keySave, 'blue': self.showkeyboard, 'yellow': self.showNewkeyboard, 'cancel': self.keyClose, "left": self.keyLeft, "right": self.keyRight,}, -2)
-        self.currKeyoboard=config.NewVirtualKeyBoard.textinput.value
+        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions'], {
+            'green': self.keySave,
+            'yellow': self.showNewkeyboard,
+            'cancel': self.keyClose,
+            "left": self.keyLeft,
+            "right": self.keyRight
+        }, -2)
+        self.currKeyoboard = config.NewVirtualKeyBoard.textinput.value
+        self.showKeyoboard = config.NewVirtualKeyBoard.showsuggestion.value
         self.createConfigList()
 
     def changedEntry(self):
-            cur = self['config'].list[0]
-            curval=cur[1].value
-            print("curval", curval)
-            if 'NewVirtualKeyBoard' ==curval:
-                self.createConfigList(True)
-            else:
-                self.createConfigList(False)
+        cur = self['config'].list[0]
+        curval = cur[1].value
+        print("curval", curval)
+        if 'NewVirtualKeyBoard' == curval:
+            self.createConfigList(True)
+        else:
+            self.createConfigList(False)
 
-    def createConfigList(self,value=False):
-        self.list=[]
+    def createConfigList(self, value=False):
+        self.list = []
         self.list.append(getConfigListEntry(_('Text input method-keyboard:'), config.NewVirtualKeyBoard.textinput))
-        if  config.NewVirtualKeyBoard.textinput.value=='NewVirtualKeyBoard' or value==True:
+        if config.NewVirtualKeyBoard.textinput.value == 'NewVirtualKeyBoard' or value is True:
             self.list.append(getConfigListEntry(_('Show google and history suggestion:'), config.NewVirtualKeyBoard.showsuggestion))
         else:
             pass
+        self.list.append(getConfigListEntry(_('Show plugin in Plugin Browser (Need restart E2):'), config.NewVirtualKeyBoard.showinplugins))
         self['config'].list = self.list
         self['config'].l.setList(self.list)
 
@@ -1660,50 +1720,48 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
             x[1].save()
         configfile.save()
         py_link = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.py")
+        pyc_link = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.pyc")
         py_image = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.py")
         py_backup = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard_backup.py")
         pyo_image = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard.pyo")
         pyo_backup = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Screens/VirtualKeyBoard_backup.pyo")
         py_NewVirtualKeyBoard = resolveFilename(SCOPE_PLUGINS, "SystemPlugins/NewVirtualKeyBoard/VirtualKeyBoard.py")
-        if not config.NewVirtualKeyBoard.textinput.value == self.currKeyoboard :
-           if config.NewVirtualKeyBoard.textinput.value == "NewVirtualKeyBoard":
-               if not os.path.islink(py_link):
-                  if os.path.exists(py_image):
-                     os.rename(py_image, py_backup)
-                  if os.path.exists(pyo_image):
-                     os.rename(pyo_image, pyo_backup)
-                  os.symlink(py_NewVirtualKeyBoard, py_link)
-           elif config.NewVirtualKeyBoard.textinput.value == "VirtualKeyBoard":
-               if os.path.islink(py_link):
-                  if os.path.exists(py_backup):
-                     os.remove(py_link)
-                     os.rename(py_backup, py_image)
-                  elif os.path.exists(pyo_backup):
-                     os.remove(py_link)
-                     os.rename(pyo_backup, pyo_image)
-               else:
-                  pass
-           self.session.openWithCallback(self.restartenigma, MessageBox, _('Restart enigma2 to load new settings?'), MessageBox.TYPE_YESNO)
-        else:
-               self.close(True)
 
-    def showkeyboard(self):
-        if self.fromkeyboard:
-           self.close()
+        if not config.NewVirtualKeyBoard.textinput.value == self.currKeyoboard or config.NewVirtualKeyBoard.showsuggestion.value == self.showKeyoboard:
+            if config.NewVirtualKeyBoard.textinput.value == "NewVirtualKeyBoard":
+                if os.path.exists(pyc_link):
+                    os.remove(pyc_link)
+                if not os.path.islink(py_link):
+                    if os.path.exists(py_image):
+                        os.rename(py_image, py_backup)
+                        os.remove(pyo_image)
+                    elif os.path.exists(pyo_image):
+                        os.rename(pyo_image, pyo_backup)
+                    os.symlink(py_NewVirtualKeyBoard, py_link)
+
+            elif config.NewVirtualKeyBoard.textinput.value == "VirtualKeyBoard":
+                if os.path.islink(py_link):
+                    if os.path.exists(py_backup):
+                        os.remove(py_link)
+                        os.rename(py_backup, py_image)
+                    elif os.path.exists(pyo_backup):
+                        os.remove(py_link)
+                        os.rename(pyo_backup, pyo_image)
+                else:
+                    pass
+
+            self.session.openWithCallback(self.restartenigma, MessageBox, _('Restart enigma2 to load new settings?'), MessageBox.TYPE_YESNO)
         else:
-            try:    
-                   from Screens.VirtualKeyBoard import VirtualKeyBoard
-            except:
-                    print ("error")
+            self.close(True)
 
     def showNewkeyboard(self):
         if self.fromkeyboard:
-           self.close()
+            self.close()
         else:
-            try:    
-                   self.session.open(VirtualKeyBoard)
-            except:
-                    print("error")
+            try:
+                self.session.open(VirtualKeyBoard)
+            except Exception as e:
+                print(e)
 
     def restartenigma(self, result):
         if result:
@@ -1717,732 +1775,241 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
             x[1].cancel()
         self.close()
 
-KbLayouts=[('Albanian', 'sq_AL', '0000041c'),
-            ('Arabic (101)', 'ar_SA', '00000401'),
-            ('Arabic (102)', 'ar_SA', '00010401'),
-            ('Arabic (102) AZERTY', 'ar_SA', '00020401'),
-            ('Armenian Eastern', 'hy_AM', '0000042b'),
-            ('Armenian Western', 'hy_AM', '0001042b'),
-            ('Assamese - INSCRIPT', 'as_IN', '0000044d'),
-            ('Azeri Cyrillic', 'az_Cyrl-AZ', '0000082c'),
-            ('Azeri Latin', 'az_Latn-AZ', '0000042c'),
-            ('Bashkir', 'ba_RU', '0000046d'),
-            ('Belarusian', 'be_BY', '00000423'),
-            ('Belgian (Comma)', 'fr_BE', '0001080c'),
-            ('Belgian (Period)', 'nl_BE', '00000813'),
-            ('Belgian French', 'fr_BE', '0000080c'),
-            ('Bengali', 'bn_IN', '00000445'),
-            ('Bengali - INSCRIPT', 'bn_IN', '00020445'),
-            ('Bengali - INSCRIPT (Legacy)', 'bn_IN', '00010445'),
-            ('Bosnian (Cyrillic)', 'bs_Cyrl-BA', '0000201a'),
-            ('Bulgarian', 'bg_BG', '00030402'),
-            ('Bulgarian (Latin)', 'bg_BG', '00010402'),
-            ('Bulgarian (Phonetic Traditional)', 'bg_BG', '00040402'),
-            ('Bulgarian (Phonetic)', 'bg_BG', '00020402'),
-            ('Bulgarian (Typewriter)', 'bg_BG', '00000402'),
-            ('Canadian French', 'en_CA', '00001009'),
-            ('Canadian French (Legacy)', 'fr_CA', '00000c0c'),
-            ('Canadian Multilingual Standard', 'en_CA', '00011009'),
-            ('Chinese (Simplified) - US Keyboard', 'zh_CN', '00000804'
-             ),
-            ('Chinese (Simplified, Singapore) - US Keyboard', 'zh_SG',
-             '00001004'),
-            ('Chinese (Traditional) - US Keyboard', 'zh_TW', '00000404'
-             ),
-            ('Chinese (Traditional, Hong Kong S.A.R.) - US Keyboard',
-             'zh_HK', '00000c04'),
-            ('Chinese (Traditional, Macao S.A.R.) - US Keyboard',
-             'zh_MO', '00001404'),
-            ('Croatian', 'hr_HR', '0000041a'),
-            ('Czech', 'cs_CZ', '00000405'),
-            ('Czech (QWERTY)', 'cs_CZ', '00010405'),
-            ('Czech Programmers', 'cs_CZ', '00020405'),
-            ('Danish', 'da_DK', '00000406'),
-            ('Devanagari - INSCRIPT', 'hi_IN', '00000439'),
-            ('Divehi Phonetic', 'dv_MV', '00000465'),
-            ('Divehi Typewriter', 'dv_MV', '00010465'),
-            ('Dutch', 'nl_NL', '00000413'),
-            ('Estonian', 'et_EE', '00000425'),
-            ('Faeroese', 'fo_FO', '00000438'),
-            ('Finnish', 'fi_FI', '0000040b'),
-            ('Finnish with Sami', 'se_SE', '0001083b'),
-            ('French', 'fr_FR', '0000040c'),
-            ('Gaelic', 'en_IE', '00011809'),
-            ('Georgian', 'ka_GE', '00000437'),
-            ('Georgian (Ergonomic)', 'ka_GE', '00020437'),
-            ('Georgian (QWERTY)', 'ka_GE', '00010437'),
-            ('German', 'de_DE', '00000407'),
-            ('German (IBM)', 'de_DE', '00010407'),
-            ('Greek', 'el_GR', '00000408'),
-            ('Greek (220)', 'el_GR', '00010408'),
-            ('Greek (220) Latin', 'el_GR', '00030408'),
-            ('Greek (319)', 'el_GR', '00020408'),
-            ('Greek (319) Latin', 'el_GR', '00040408'),
-            ('Greek Latin', 'el_GR', '00050408'),
-            ('Greek Polytonic', 'el_GR', '00060408'),
-            ('Greenlandic', 'kl_GL', '0000046f'),
-            ('Gujarati', 'gu_IN', '00000447'),
-            ('Hausa', 'ha_Latn-NG', '00000468'),
-            ('Hebrew', 'he_IL', '0000040d'),
-            ('Hindi Traditional', 'hi_IN', '00010439'),
-            ('Hungarian', 'hu_HU', '0000040e'),
-            ('Hungarian 101-key', 'hu_HU', '0001040e'),
-            ('Icelandic', 'is_IS', '0000040f'),
-            ('Igbo', 'ig_NG', '00000470'),
-            ('Inuktitut - Latin', 'iu_Latn-CA', '0000085d'),
-            ('Inuktitut - Naqittaut', 'iu_Cans-CA', '0001045d'),
-            ('Irish', 'en_IE', '00001809'),
-            ('Italian', 'it_IT', '00000410'),
-            ('Italian (142)', 'it_IT', '00010410'),
-            ('Japanese', 'ja_JP', '00000411'),
-            ('Kannada', 'kn_IN', '0000044b'),
-            ('Kazakh', 'kk_KZ', '0000043f'),
-            ('Khmer', 'km_KH', '00000453'),
-            ('Korean', 'ko_KR', '00000412'),
-            ('Kyrgyz Cyrillic', 'ky_KG', '00000440'),
-            ('Lao', 'lo_LA', '00000454'),
-            ('Latin American', 'es_MX', '0000080a'),
-            ('Latvian', 'lv_LV', '00000426'),
-            ('Latvian (QWERTY)', 'lv_LV', '00010426'),
-            ('Lithuanian', 'lt_LT', '00010427'),
-            ('Lithuanian IBM', 'lt_LT', '00000427'),
-            ('Lithuanian Standard', 'lt_LT', '00020427'),
-            ('Luxembourgish', 'lb_LU', '0000046e'),
-            ('Macedonian (FYROM)', 'mk_MK', '0000042f'),
-            ('Macedonian (FYROM) - Standard', 'mk_MK', '0001042f'),
-            ('Malayalam', 'ml_IN', '0000044c'),
-            ('Maltese 47-Key', 'mt_MT', '0000043a'),
-            ('Maltese 48-Key', 'mt_MT', '0001043a'),
-            ('Maori', 'mi_NZ', '00000481'),
-            ('Marathi', 'mr_IN', '0000044e'),
-            ('Mongolian (Mongolian Script)', 'mn_Mong-CN', '00000850'),
-            ('Mongolian Cyrillic', 'mn_MN', '00000450'),
-            ('Nepali', 'ne_NP', '00000461'),
-            ('Norwegian', 'nb_NO', '00000414'),
-            ('Norwegian with Sami', 'se_NO', '0000043b'),
-            ('Oriya', 'or_IN', '00000448'),
-            ('Pashto (Afghanistan)', 'ps_AF', '00000463'),
-            ('Persian', 'fa_IR', '00000429'),
-            ('Polish (214)', 'pl_PL', '00010415'),
-            ('Polish (Programmers)', 'pl_PL', '00000415'),
-            ('Portuguese', 'pt_PT', '00000816'),
-            ('Portuguese (Brazilian ABNT)', 'pt_BR', '00000416'),
-            ('Portuguese (Brazilian ABNT2)', 'pt_BR', '00010416'),
-            ('Punjabi', 'pa_IN', '00000446'),
-            ('Romanian (Legacy)', 'ro_RO', '00000418'),
-            ('Romanian (Programmers)', 'ro_RO', '00020418'),
-            ('Romanian (Standard)', 'ro_RO', '00010418'),
-            ('Russian', 'ru_RU', '00000419'),
-            ('Russian (Typewriter)', 'ru_RU', '00010419'),
-            ('Sami Extended Finland-Sweden', 'se_SE', '0002083b'),
-            ('Sami Extended Norway', 'se_NO', '0001043b'),
-            ('Serbian (Cyrillic)', 'sr_Cyrl-CS', '00000c1a'),
-            ('Serbian (Latin)', 'sr_Latn-CS', '0000081a'),
-            ('Sesotho sa Leboa', 'nso_ZA', '0000046c'),
-            ('Setswana', 'tn_ZA', '00000432'),
-            ('Sinhala', 'si_LK', '0000045b'),
-            ('Sinhala - Wij 9', 'si_LK', '0001045b'),
-            ('Slovak', 'sk_SK', '0000041b'),
-            ('Slovak (QWERTY)', 'sk_SK', '0001041b'),
-            ('Slovenian', 'sl_SI', '00000424'),
-            ('Sorbian Extended', 'hsb_DE', '0001042e'),
-            ('Sorbian Standard', 'hsb_DE', '0002042e'),
-            ('Sorbian Standard (Legacy)', 'hsb_DE', '0000042e'),
-            ('Spanish', 'es_ES', '0000040a'),
-            ('Spanish Variation', 'es_ES', '0001040a'),
-            ('Swedish', 'sv_SE', '0000041d'),
-            ('Swedish with Sami', 'se_SE', '0000083b'),
-            ('Swiss French', 'fr_CH', '0000100c'),
-            ('Swiss German', 'de_CH', '00000807'),
-            ('Syriac', 'syr_SY', '0000045a'),
-            ('Syriac Phonetic', 'syr_SY', '0001045a'),
-            ('Tajik', 'tg_Cyrl-TJ', '00000428'),
-            ('Tamil', 'ta_IN', '00000449'),
-            ('Tatar', 'tt_RU', '00000444'),
-            ('Telugu', 'te_IN', '0000044a'),
-            ('Thai Kedmanee', 'th_TH', '0000041e'),
-            ('Thai Kedmanee (non-ShiftLock)', 'th_TH', '0002041e'),
-            ('Thai Pattachote', 'th_TH', '0001041e'),
-            ('Thai Pattachote (non-ShiftLock)', 'th_TH', '0003041e'),
-            ('Tibetan (PRC)', 'bo_CN', '00000451'),
-            ('Turkish F', 'tr_TR', '0001041f'),
-            ('Turkish Q', 'tr_TR', '0000041f'),
-            ('Turkmen', 'tk_TM', '00000442'),
-            ('US', 'en_US', '00000409'),
-            ('US English Table for IBM Arabic 238_L', 'en_US',
-             '00050409'),
-            ('Ukrainian', 'uk_UA', '00000422'),
-            ('Ukrainian (Enhanced)', 'uk_UA', '00020422'),
-            ('United Kingdom', 'en_GB', '00000809'),
-            ('United Kingdom Extended', 'cy_GB', '00000452'),
-            ('United States-Dvorak', 'en_US', '00010409'),
-            ('United States-Dvorak for left hand', 'en_US', '00030409'
-             ),
-            ('United States-Dvorak for right hand', 'en_US', '00040409'
-             ),
-            ('United States-International', 'en_US', '00020409'),
-            ('Urdu', 'ur_PK', '00000420'),
-            ('Uyghur', 'ug_CN', '00010480'),
-            ('Uyghur (Legacy)', 'ug_CN', '00000480'),
-            ('Uzbek Cyrillic', 'uz_Cyrl-UZ', '00000843'),
-            ('Vietnamese', 'vi_VN', '0000042a'),
-            ('Wolof', 'wo_SN', '00000488'),
-            ('Yakut', 'sah_RU', '00000485'),
-            ('Yoruba', 'yo_NG', '0000046a'),
-            ]
+# name, iso code, kle code
+KbLayouts = [
+    ('Arabic', 'ar_AE', '00000401'),
+    ('Bulgarian', 'bg_BG', '00030402'),
+    ('Czech', 'cs_CZ', '00000405'),
+    ('Danish', 'da_DK', '00000406'),
+    ('German', 'de_DE', '00000407'),
+    ('Greek', 'el_GR', '00000408'),
+    ('United Kingdom', 'en_GB', '00000809'),
+    ('United States', 'en_US', '00020409'),
+    ('Spanish', 'es_ES', '0000040a'),
+    ('Estonian', 'et_EE', '00000425'),
+    ('Faeroese', 'fo_FO', '00000438'),
+    ('Finnish', 'fi_FI', '0000040b'),
+    ('French', 'fr_FR', '0000040c'),
+    ('Hebrew', 'he_IL', '0000040d'),
+    ('Croatian', 'hr_HR', '0000041a'),
+    ('Hungarian', 'hu_HU', '0000040e'),
+    ('Icelandic', 'is_IS', '0000040f'),
+    ('Italian', 'it_IT', '00000410'),
+    ('Lithuanian', 'lt_LT', '00010427'),
+    ('Latvian', 'lv_LV', '00000426'),
+    ('Norwegian', 'nb_NO', '00000414'),
+    ('Dutch', 'nl_NL', '00000413'),
+    ('Polish (214)', 'pl_PL', '00010415'),
+    ('Portuguese (Brazilian)', 'pt_BR', '00000416'),
+    ('Portuguese', 'pt_PT', '00000816'),
+    ('Romanian', 'ro_RO', '00010418'),
+    ('Russian', 'ru_RU', '00000419'),
+    ('Slovak', 'sk_SK', '0000041b'),
+    ('Slovenian', 'sl_SI', '00000424'),
+    ('Serbian (Cyrillic)', 'sr_YU', '00000c1a'),
+    ('Serbian (Latin)', 'sr_YU', '0000081a'),
+    ('Swedish', 'sv_SE', '0000041d'),
+    ('Thai Kedmanee', 'th_TH', '0000041e'),
+    ('Turkish', 'tr_TR', '0000041f'),
+    ('Ukrainian', 'uk_UA', '00020422')
+]
+
 
 defaultKBLAYOUT = {
-            'layout': {
-                2: {
-                    0: u'`',
-                    1: u'~',
-                    8: u'`',
-                    9: u'~',
-                    },
-                3: {
-                    0: u'1',
-                    1: u'!',
-                    6: u'\xa1',
-                    7: u'\xb9',
-                    8: u'1',
-                    9: u'!',
-                    14: u'\xa1',
-                    15: u'\xb9',
-                    },
-                4: {
-                    0: u'2',
-                    1: u'@',
-                    6: u'\xb2',
-                    8: u'2',
-                    9: u'@',
-                    14: u'\xb2',
-                    },
-                5: {
-                    0: u'3',
-                    1: u'#',
-                    6: u'\xb3',
-                    8: u'3',
-                    9: u'#',
-                    14: u'\xb3',
-                    },
-                6: {
-                    0: u'4',
-                    1: u'$',
-                    6: u'\xa4',
-                    7: u'\xa3',
-                    8: u'4',
-                    9: u'$',
-                    14: u'\xa4',
-                    15: u'\xa3',
-                    },
-                7: {
-                    0: u'5',
-                    1: u'%',
-                    6: u'\u20ac',
-                    8: u'5',
-                    9: u'%',
-                    14: u'\u20ac',
-                    },
-                8: {
-                    0: u'6',
-                    1: u'^',
-                    6: u'\xbc',
-                    8: u'6',
-                    9: u'^',
-                    14: u'\xbc',
-                    },
-                9: {
-                    0: u'7',
-                    1: u'&',
-                    6: u'\xbd',
-                    8: u'7',
-                    9: u'&',
-                    14: u'\xbd',
-                    },
-                10: {
-                    0: u'8',
-                    1: u'*',
-                    6: u'\xbe',
-                    8: u'8',
-                    9: u'*',
-                    14: u'\xbe',
-                    },
-                11: {
-                    0: u'9',
-                    1: u'(',
-                    6: u'\u2018',
-                    8: u'9',
-                    9: u'(',
-                    14: u'\u2018',
-                    },
-                12: {
-                    0: u'0',
-                    1: u')',
-                    6: u'\u2019',
-                    8: u'0',
-                    9: u')',
-                    14: u'\u2019',
-                    },
-                13: {
-                    0: u'-',
-                    1: u'_',
-                    6: u'\xa5',
-                    8: u'-',
-                    9: u'_',
-                    14: u'\xa5',
-                    },
-                14: {
-                    0: u'=',
-                    1: u'+',
-                    6: u'\xd7',
-                    7: u'\xf7',
-                    8: u'=',
-                    9: u'+',
-                    14: u'\xd7',
-                    15: u'\xf7',
-                    },
-                17: {
-                    0: u'q',
-                    1: u'Q',
-                    6: u'\xe4',
-                    7: u'\xc4',
-                    8: u'Q',
-                    9: u'q',
-                    14: u'\xc4',
-                    15: u'\xe4',
-                    },
-                18: {
-                    0: u'w',
-                    1: u'W',
-                    6: u'\xe5',
-                    7: u'\xc5',
-                    8: u'W',
-                    9: u'w',
-                    14: u'\xc5',
-                    15: u'\xe5',
-                    },
-                19: {
-                    0: u'e',
-                    1: u'E',
-                    6: u'\xe9',
-                    7: u'\xc9',
-                    8: u'E',
-                    9: u'e',
-                    14: u'\xc9',
-                    15: u'\xe9',
-                    },
-                20: {
-                    0: u'r',
-                    1: u'R',
-                    6: u'\xae',
-                    8: u'R',
-                    9: u'r',
-                    14: u'\xae',
-                    },
-                21: {
-                    0: u't',
-                    1: u'T',
-                    6: u'\xfe',
-                    7: u'\xde',
-                    8: u'T',
-                    9: u't',
-                    14: u'\xde',
-                    15: u'\xfe',
-                    },
-                22: {
-                    0: u'y',
-                    1: u'Y',
-                    6: u'\xfc',
-                    7: u'\xdc',
-                    8: u'Y',
-                    9: u'y',
-                    14: u'\xdc',
-                    15: u'\xfc',
-                    },
-                23: {
-                    0: u'u',
-                    1: u'U',
-                    6: u'\xfa',
-                    7: u'\xda',
-                    8: u'U',
-                    9: u'u',
-                    14: u'\xda',
-                    15: u'\xfa',
-                    },
-                24: {
-                    0: u'i',
-                    1: u'I',
-                    6: u'\xed',
-                    7: u'\xcd',
-                    8: u'I',
-                    9: u'i',
-                    14: u'\xcd',
-                    15: u'\xed',
-                    },
-                25: {
-                    0: u'o',
-                    1: u'O',
-                    6: u'\xf3',
-                    7: u'\xd3',
-                    8: u'O',
-                    9: u'o',
-                    14: u'\xd3',
-                    15: u'\xf3',
-                    },
-                26: {
-                    0: u'p',
-                    1: u'P',
-                    6: u'\xf6',
-                    7: u'\xd6',
-                    8: u'P',
-                    9: u'p',
-                    14: u'\xd6',
-                    15: u'\xf6',
-                    },
-                27: {
-                    0: u'[',
-                    1: u'{',
-                    2: u'\x1b',
-                    6: u'\xab',
-                    8: u'[',
-                    9: u'{',
-                    10: u'\x1b',
-                    14: u'\xab',
-                    },
-                28: {
-                    0: u']',
-                    1: u'}',
-                    2: u'\x1d',
-                    6: u'\xbb',
-                    8: u']',
-                    9: u'}',
-                    10: u'\x1d',
-                    14: u'\xbb',
-                    },
-                31: {
-                    0: u'a',
-                    1: u'A',
-                    6: u'\xe1',
-                    7: u'\xc1',
-                    8: u'A',
-                    9: u'a',
-                    14: u'\xc1',
-                    15: u'\xe1',
-                    },
-                32: {
-                    0: u's',
-                    1: u'S',
-                    6: u'\xdf',
-                    7: u'\xa7',
-                    8: u'S',
-                    9: u's',
-                    14: u'\xa7',
-                    15: u'\xdf',
-                    },
-                33: {
-                    0: u'd',
-                    1: u'D',
-                    6: u'\xf0',
-                    7: u'\xd0',
-                    8: u'D',
-                    9: u'd',
-                    14: u'\xd0',
-                    15: u'\xf0',
-                    },
-                34: {
-                    0: u'f',
-                    1: u'F',
-                    8: u'F',
-                    9: u'f',
-                    },
-                35: {
-                    0: u'g',
-                    1: u'G',
-                    8: u'G',
-                    9: u'g',
-                    },
-                36: {
-                    0: u'h',
-                    1: u'H',
-                    8: u'H',
-                    9: u'h',
-                    },
-                37: {
-                    0: u'j',
-                    1: u'J',
-                    8: u'J',
-                    9: u'j',
-                    },
-                38: {
-                    0: u'k',
-                    1: u'K',
-                    8: u'K',
-                    9: u'k',
-                    },
-                39: {
-                    0: u'l',
-                    1: u'L',
-                    6: u'\xf8',
-                    7: u'\xd8',
-                    8: u'L',
-                    9: u'l',
-                    14: u'\xd8',
-                    15: u'\xf8',
-                    },
-                40: {
-                    0: u';',
-                    1: u':',
-                    6: u'\xb6',
-                    7: u'\xb0',
-                    8: u';',
-                    9: u':',
-                    14: u'\xb6',
-                    15: u'\xb0',
-                    },
-                41: {
-                    0: u"'",
-                    1: u'"',
-                    6: u'\xb4',
-                    7: u'\xa8',
-                    8: u"'",
-                    9: u'"',
-                    14: u'\xb4',
-                    15: u'\xa8',
-                    },
-                44: {
-                    0: u'z',
-                    1: u'Z',
-                    6: u'\xe6',
-                    7: u'\xc6',
-                    8: u'Z',
-                    9: u'z',
-                    14: u'\xc6',
-                    15: u'\xe6',
-                    },
-                45: {
-                    0: u'x',
-                    1: u'X',
-                    8: u'X',
-                    9: u'x',
-                    },
-                46: {
-                    0: u'c',
-                    1: u'C',
-                    6: u'\xa9',
-                    7: u'\xa2',
-                    8: u'C',
-                    9: u'c',
-                    14: u'\xa2',
-                    15: u'\xa9',
-                    },
-                47: {
-                    0: u'v',
-                    1: u'V',
-                    8: u'V',
-                    9: u'v',
-                    },
-                48: {
-                    0: u'b',
-                    1: u'B',
-                    8: u'B',
-                    9: u'b',
-                    },
-                49: {
-                    0: u'n',
-                    1: u'N',
-                    6: u'\xf1',
-                    7: u'\xd1',
-                    8: u'N',
-                    9: u'n',
-                    14: u'\xd1',
-                    15: u'\xf1',
-                    },
-                50: {
-                    0: u'm',
-                    1: u'M',
-                    6: u'\xb5',
-                    8: u'M',
-                    9: u'm',
-                    14: u'\xb5',
-                    },
-                51: {
-                    0: u',',
-                    1: u'<',
-                    6: u'\xe7',
-                    7: u'\xc7',
-                    },
-                52: {
-                    0: u'.',
-                    1: u'>',
-                    8: u'.',
-                    9: u'>',
-                    },
-                53: {
-                    0: u'/',
-                    1: u'?',
-                    6: u'\xbf',
-                    8: u'/',
-                    9: u'?',
-                    14: u'\xbf',
-                    },
-                54: {
-                    0: u'\\',
-                    1: u'|',
-                    2: u'\x1c',
-                    6: u'\xac',
-                    7: u'\xa6',
-                    8: u'\\',
-                    9: u'|',
-                    10: u'\x1c',
-                    14: u'\xac',
-                    15: u'\xa6',
-                    },
-                59: {
-                    0: u' ',
-                    1: u' ',
-                    2: u' ',
-                    8: u' ',
-                    9: u' ',
-                    10: u' ',
-                    },
-                },
-            'name': u'English (United States)',
-            'locale': u'en-US',
-            'id': u'00020409',
-            'deadkeys': {
-                u'~': {
-                    u'a': u'\xe3',
-                    u'A': u'\xc3',
-                    u' ': u'~',
-                    u'O': u'\xd5',
-                    u'N': u'\xd1',
-                    u'o': u'\xf5',
-                    u'n': u'\xf1',
-                    },
-                u'`': {
-                    u'a': u'\xe0',
-                    u'A': u'\xc0',
-                    u'e': u'\xe8',
-                    u' ': u'`',
-                    u'i': u'\xec',
-                    u'o': u'\xf2',
-                    u'I': u'\xcc',
-                    u'u': u'\xf9',
-                    u'O': u'\xd2',
-                    u'E': u'\xc8',
-                    u'U': u'\xd9',
-                    },
-                u'"': {
-                    u'a': u'\xe4',
-                    u'A': u'\xc4',
-                    u'e': u'\xeb',
-                    u' ': u'"',
-                    u'i': u'\xef',
-                    u'o': u'\xf6',
-                    u'I': u'\xcf',
-                    u'u': u'\xfc',
-                    u'O': u'\xd6',
-                    u'y': u'\xff',
-                    u'E': u'\xcb',
-                    u'U': u'\xdc',
-                    },
-                u"'": {
-                    u'a': u'\xe1',
-                    u'A': u'\xc1',
-                    u'c': u'\xe7',
-                    u'e': u'\xe9',
-                    u' ': u"'",
-                    u'i': u'\xed',
-                    u'C': u'\xc7',
-                    u'o': u'\xf3',
-                    u'I': u'\xcd',
-                    u'u': u'\xfa',
-                    u'O': u'\xd3',
-                    u'y': u'\xfd',
-                    u'E': u'\xc9',
-                    u'U': u'\xda',
-                    u'Y': u'\xdd',
-                    },
-                u'^': {
-                    u'a': u'\xe2',
-                    u'A': u'\xc2',
-                    u'e': u'\xea',
-                    u' ': u'^',
-                    u'i': u'\xee',
-                    u'o': u'\xf4',
-                    u'I': u'\xce',
-                    u'u': u'\xfb',
-                    u'O': u'\xd4',
-                    u'E': u'\xca',
-                    u'U': u'\xdb',
-                    },
-                },
-            'desc': u'United States-International',
-            }
+    'layout': {
+        2: {0: u'`', 1: u'~', 8: u'`', 9: u'~'},
+        3: {0: u'1', 1: u'!', 6: u'\xa1', 7: u'\xb9', 8: u'1', 9: u'!', 14: u'\xa1', 15: u'\xb9'},
+        4: {0: u'2', 1: u'@', 6: u'\xb2', 8: u'2', 9: u'@', 14: u'\xb2'},
+        5: {0: u'3', 1: u'#', 6: u'\xb3', 8: u'3', 9: u'#', 14: u'\xb3'},
+        6: {0: u'4', 1: u'$', 6: u'\xa4', 7: u'\xa3', 8: u'4', 9: u'$', 14: u'\xa4', 15: u'\xa3'},
+        7: {0: u'5', 1: u'%', 6: u'\u20ac', 8: u'5', 9: u'%', 14: u'\u20ac'},
+        8: {0: u'6', 1: u'^', 6: u'\xbc', 8: u'6', 9: u'^', 14: u'\xbc'},
+        9: {0: u'7', 1: u'&', 6: u'\xbd', 8: u'7', 9: u'&', 14: u'\xbd'},
+        10: {0: u'8', 1: u'*', 6: u'\xbe', 8: u'8', 9: u'*', 14: u'\xbe'},
+        11: {0: u'9', 1: u'(', 6: u'\u2018', 8: u'9', 9: u'(', 14: u'\u2018'},
+        12: {0: u'0', 1: u')', 6: u'\u2019', 8: u'0', 9: u')', 14: u'\u2019'},
+        13: {0: u'-', 1: u'_', 6: u'\xa5', 8: u'-', 9: u'_', 14: u'\xa5'},
+        14: {0: u'=', 1: u'+', 6: u'\xd7', 7: u'\xf7', 8: u'=', 9: u'+', 14: u'\xd7', 15: u'\xf7'},
+        17: {0: u'q', 1: u'Q', 6: u'\xe4', 7: u'\xc4', 8: u'Q', 9: u'q', 14: u'\xc4', 15: u'\xe4'},
+        18: {0: u'w', 1: u'W', 6: u'\xe5', 7: u'\xc5', 8: u'W', 9: u'w', 14: u'\xc5', 15: u'\xe5'},
+        19: {0: u'e', 1: u'E', 6: u'\xe9', 7: u'\xc9', 8: u'E', 9: u'e', 14: u'\xc9', 15: u'\xe9'},
+        20: {0: u'r', 1: u'R', 6: u'\xae', 8: u'R', 9: u'r', 14: u'\xae'},
+        21: {0: u't', 1: u'T', 6: u'\xfe', 7: u'\xde', 8: u'T', 9: u't', 14: u'\xde', 15: u'\xfe'},
+        22: {0: u'y', 1: u'Y', 6: u'\xfc', 7: u'\xdc', 8: u'Y', 9: u'y', 14: u'\xdc', 15: u'\xfc'},
+        23: {0: u'u', 1: u'U', 6: u'\xfa', 7: u'\xda', 8: u'U', 9: u'u', 14: u'\xda', 15: u'\xfa'},
+        24: {0: u'i', 1: u'I', 6: u'\xed', 7: u'\xcd', 8: u'I', 9: u'i', 14: u'\xcd', 15: u'\xed'},
+        25: {0: u'o', 1: u'O', 6: u'\xf3', 7: u'\xd3', 8: u'O', 9: u'o', 14: u'\xd3', 15: u'\xf3'},
+        26: {0: u'p', 1: u'P', 6: u'\xf6', 7: u'\xd6', 8: u'P', 9: u'p', 14: u'\xd6', 15: u'\xf6'},
+        27: {0: u'[', 1: u'{', 2: u'\x1b', 6: u'\xab', 8: u'[', 9: u'{', 10: u'\x1b', 14: u'\xab'},
+        28: {0: u']', 1: u'}', 2: u'\x1d', 6: u'\xbb', 8: u']', 9: u'}', 10: u'\x1d', 14: u'\xbb'},
+        31: {0: u'a', 1: u'A', 6: u'\xe1', 7: u'\xc1', 8: u'A', 9: u'a', 14: u'\xc1', 15: u'\xe1'},
+        32: {0: u's', 1: u'S', 6: u'\xdf', 7: u'\xa7', 8: u'S', 9: u's', 14: u'\xa7', 15: u'\xdf'},
+        33: {0: u'd', 1: u'D', 6: u'\xf0', 7: u'\xd0', 8: u'D', 9: u'd', 14: u'\xd0', 15: u'\xf0'},
+        34: {0: u'f', 1: u'F', 8: u'F', 9: u'f'},
+        35: {0: u'g', 1: u'G', 8: u'G', 9: u'g'},
+        36: {0: u'h', 1: u'H', 8: u'H', 9: u'h'},
+        37: {0: u'j', 1: u'J', 8: u'J', 9: u'j'},
+        38: {0: u'k', 1: u'K', 8: u'K', 9: u'k'},
+        39: {0: u'l', 1: u'L', 6: u'\xf8', 7: u'\xd8', 8: u'L', 9: u'l', 14: u'\xd8', 15: u'\xf8'},
+        40: {0: u';', 1: u':', 6: u'\xb6', 7: u'\xb0', 8: u';', 9: u':', 14: u'\xb6', 15: u'\xb0'},
+        41: {0: u"'", 1: u'"', 6: u'\xb4', 7: u'\xa8', 8: u"'", 9: u'"', 14: u'\xb4', 15: u'\xa8'},
+        44: {0: u'z', 1: u'Z', 6: u'\xe6', 7: u'\xc6', 8: u'Z', 9: u'z', 14: u'\xc6', 15: u'\xe6'},
+        45: {0: u'x', 1: u'X', 8: u'X', 9: u'x'},
+        46: {0: u'c', 1: u'C', 6: u'\xa9', 7: u'\xa2', 8: u'C', 9: u'c', 14: u'\xa2', 15: u'\xa9'},
+        47: {0: u'v', 1: u'V', 8: u'V', 9: u'v'},
+        48: {0: u'b', 1: u'B', 8: u'B', 9: u'b'},
+        49: {0: u'n', 1: u'N', 6: u'\xf1', 7: u'\xd1', 8: u'N', 9: u'n', 14: u'\xd1', 15: u'\xf1'},
+        50: {0: u'm', 1: u'M', 6: u'\xb5', 8: u'M', 9: u'm', 14: u'\xb5'},
+        51: {0: u',', 1: u'<', 6: u'\xe7', 7: u'\xc7'},
+        52: {0: u'.', 1: u'>', 8: u'.', 9: u'>'},
+        53: {0: u'/', 1: u'?', 6: u'\xbf', 8: u'/', 9: u'?', 14: u'\xbf'},
+        54: {0: u'\\', 1: u'|', 2: u'\x1c', 6: u'\xac', 7: u'\xa6', 8: u'\\', 9: u'|', 10: u'\x1c', 14: u'\xac', 15: u'\xa6'},
+        59: {0: u' ', 1: u' ', 2: u' ', 8: u' ', 9: u' ', 10: u' '}},
+    'name': u'United Kingdom',
+    'locale': u'en-UK',
+    'id': u'00000809',
+    'deadkeys': {
+        u'~': {
+            u'a': u'\xe3',
+            u'A': u'\xc3',
+            u' ': u'~',
+            u'O': u'\xd5',
+            u'N': u'\xd1',
+            u'o': u'\xf5',
+            u'n': u'\xf1',
+            },
+        u'`': {
+            u'a': u'\xe0',
+            u'A': u'\xc0',
+            u'e': u'\xe8',
+            u' ': u'`',
+            u'i': u'\xec',
+            u'o': u'\xf2',
+            u'I': u'\xcc',
+            u'u': u'\xf9',
+            u'O': u'\xd2',
+            u'E': u'\xc8',
+            u'U': u'\xd9',
+            },
+        u'"': {
+            u'a': u'\xe4',
+            u'A': u'\xc4',
+            u'e': u'\xeb',
+            u' ': u'"',
+            u'i': u'\xef',
+            u'o': u'\xf6',
+            u'I': u'\xcf',
+            u'u': u'\xfc',
+            u'O': u'\xd6',
+            u'y': u'\xff',
+            u'E': u'\xcb',
+            u'U': u'\xdc',
+            },
+        u"'": {
+            u'a': u'\xe1',
+            u'A': u'\xc1',
+            u'c': u'\xe7',
+            u'e': u'\xe9',
+            u' ': u"'",
+            u'i': u'\xed',
+            u'C': u'\xc7',
+            u'o': u'\xf3',
+            u'I': u'\xcd',
+            u'u': u'\xfa',
+            u'O': u'\xd3',
+            u'y': u'\xfd',
+            u'E': u'\xc9',
+            u'U': u'\xda',
+            u'Y': u'\xdd',
+            },
+        u'^': {
+            u'a': u'\xe2',
+            u'A': u'\xc2',
+            u'e': u'\xea',
+            u' ': u'^',
+            u'i': u'\xee',
+            u'o': u'\xf4',
+            u'I': u'\xce',
+            u'u': u'\xfb',
+            u'O': u'\xd4',
+            u'E': u'\xca',
+            u'U': u'\xdb',
+            },
+        },
+    'desc': u'United Kingdom'}
 
-KBlayoutKeyID=[(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15), (16, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29), (30, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 42), (43, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 55), (56, 56, 57, 58, 59, 59, 59, 59, 59, 59, 59, 59, 60, 61, 62)]
+KBlayoutKeyID = [(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                 (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
+                 (16, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29),
+                 (30, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 42),
+                 (43, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 55),
+                 (56, 56, 57, 58, 59, 59, 59, 59, 59, 59, 59, 59, 60, 61, 62)]
+
 kbSkeysList = [
-    'pb',
-    'pr',
-    'pg',
-    'py',
-    'l',
-    'b',
-    'e',
-    'tmkey',
-    'k',
-    'mkey',
-    'skey',
-    'mmkey',
-    'lskey',
-    'lkey',
-    'lmkey',
-    ]
+'vkey_country',
+'vkey_backspace',
+'vkey_text',
+'vkey_text_sel',
+'vkey_single',
+'vkey_single_sel',
+'vkey_modifier',
+'vkey_double_sel',
+'vkey_double',
+'vkey_space',
+'vkey_space_sel',
+'vkey_left',
+'vkey_right',
+'vkey_delete'
+]
+
 pixmapKeys = [
-    'l',
-    'b',
-    'tmkey',
-    'mkey',
-    'mmkey',
-    'lmkey',
-    ]
+'vkey_country',
+'vkey_backspace',
+'vkey_text_sel',
+'vkey_single_sel',
+'vkey_double_sel',
+'vkey_space_sel',
+'vkey_left',
+'vkey_right',
+'vkey_delete'
+]
 
 SkeysMap = {
-    '0': 'e',
-    '1': 'skey',
-    '15': 'skey',
-    '29': 'skey',
-    '57': 'skey',
-    '58': 'skey',
-    '60': 'skey',
-    '61': 'skey',
-    '62': 'skey',
-    '59': 'lkey',
-    '16': 'lskey',
-    '30': 'lskey',
-    '42': 'lskey',
-    '43': 'lskey',
-    '55': 'lskey',
-    '56': 'lskey',
-    }
+    '0': 'vkey_text',  # text box
+    '1': 'vkey_modifier',  # esc
+    '15': 'vkey_modifier',  # backspace
+    '29': 'vkey_modifier',  # del
+    '57': 'vkey_modifier',  # ctrl l
+    '58': 'vkey_modifier',  # alt l
+    '60': 'vkey_modifier',  # alr r
+    '61': 'vkey_modifier',  # <--
+    '62': 'vkey_modifier',  # -->
+    '59': 'vkey_space',  # space
+    '16': 'vkey_double',  # clear
+    '30': 'vkey_double',  # caps
+    '42': 'vkey_double',  # enter
+    '43': 'vkey_double',  # shift l
+    '55': 'vkey_double',  # shift r
+    '56': 'vkey_double',  # country
+}
 
 markerMap = {
-    '0': 'tmkey',
-    '59': 'lmkey',
-    '16': 'mmkey',
-    '30': 'mmkey',
-    '42': 'mmkey',
-    '43': 'mmkey',
-    '55': 'mmkey',
-    '56': 'mmkey',
-    }
+    '0': 'vkey_text_sel',
+    '59': 'vkey_space_sel',
+    '16': 'vkey_double_sel',
+    '30': 'vkey_double_sel',
+    '42': 'vkey_double_sel',
+    '43': 'vkey_double_sel',
+    '55': 'vkey_double_sel',
+    '56': 'vkey_double_sel',
+}
 
 colors = {
-    'color1': gRGB(int('ffffff', 0x10)),
-    'color0': gRGB(int('39b54a', 0x10)),
-    'color3': gRGB(int('0275a0', 0x10)),
-    'color2': gRGB(int('ed1c24', 0x10)),
-    'color4': gRGB(int('979697', 0x10)),
-    }
+    'color1': gRGB(int('ffffff', 0x10)),  # white
+    'color0': gRGB(int('39b54a', 0x10)),  # green
+    'color3': gRGB(int('0275a0', 0x10)),  # blue
+    'color2': gRGB(int('ed1c24', 0x10)),  # red
+    'color4': gRGB(int('979697', 0x10)),  # grey
+}
 
 VirtualKeyBoard = NewVirtualKeyBoard
