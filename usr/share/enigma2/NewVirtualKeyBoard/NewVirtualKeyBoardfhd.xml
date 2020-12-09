@@ -5,7 +5,7 @@
         <eLabel position="450,21" size="1020,72" backgroundColor="#3f434f" transparent="0"/>
         
         <!-- title -->
-        <widget name="header" zPosition="2" position="471,21" size="450,72" font="Regular;30" foregroundColor="#ffffff" backgroundColor="#3f434f" transparent="1" noWrap="1" valign="center" halign="left" />
+        <widget name="header" zPosition="2" position="471,21" size="965,72" font="Regular;30" foregroundColor="#ffffff" backgroundColor="#3f434f" transparent="1" noWrap="1" valign="center" halign="center" />
         
         <!-- text input-->
         <widget name="0"  position="420,114" size="1020,72" alphatest="blend" transparent="1" zPosition="1" />
