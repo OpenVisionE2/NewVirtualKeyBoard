@@ -75,29 +75,24 @@ ServerUrl = 'http://tunisia-dreambox.info/TSplugins/NewVirtualKeyBoard/kle/'
 # keyboardlayout website
 # http://kbdlayout.info/
 
-
 # saved search history
 hfile = '/etc/history'
 
 parameters = {}
 kblayout_loading_error = '%s kblayout load failed'
 
-
 def getLayoutFile(KBLayoutId):
     return vkLayoutDir + '%s.kle' % KBLayoutId
-
 
 def getSLayoutFile(KBLayoutId):
     file = 'kle%s.kle' % KBLayoutId
     return ServerUrl + file
-
 
 def pathExists(path):
     if os.path.exists(path):
         return True
     else:
         return False
-
 
 def downloadFile(url, target):
     try:
@@ -109,10 +104,23 @@ def downloadFile(url, target):
         print("language download error")
         return False
 
-
 def iconsDir(file=''):
     return '/usr/share/enigma2/NewVirtualKeyBoard/icons/' + file
 
+def getversioninfo():
+    currversion = '1.0'
+    version_file = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Plugins/SystemPlugins/NewVirtualKeyBoard/version")
+    if os.path.exists(version_file):
+        try:
+            fp=open(version_file, 'r').readlines()
+            for line in fp:
+                if 'version' in line:
+                    currversion=line.split('=')[1].strip()
+        except:
+            pass
+    return (currversion)
+
+VER = getversioninfo()
 
 class languageSelectionList(GUIComponent, object):
 
@@ -547,8 +555,10 @@ class textInputSuggestions():
                 charset = charsetCode.get(self.hl, None)
                 if charset:
                     try:
-                        data = data.decode(charset)
-                        # data = str(data.decode(charset)).encode('utf-8') # py2
+                        if PY3:
+                            data = data.decode(charset)
+                        else:
+                            data = str(data.decode(charset)).encode('utf-8')
                     except:
                         pass
                 else:
@@ -814,7 +824,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self.counter = 0
         self['suggestionheader'] = Label(' ')
         self['historyheader'] = Label(' ')
-        self.header = title if title else _('Enter search text')
+        self.header = title if title else _('NewVirtualKeyBoard  V %s' % VER)
         self.startText = text
         self['text'] = textINput(text=text)
         self['header'] = Label(' ')
@@ -1643,32 +1653,32 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
     swidth = getDesktop(0).size().width()
     if isFHD():
         skin = """
-        	<screen name="nvKeyboardSetup" position="center,center" size="1080,280" backgroundColor="#16000000" title="New Virtual Keyboard Settings">
-            	<widget name="config" position="30,30" size="1020,130" itemHeight="45" font="Regular;30" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
+        	<screen name="nvKeyboardSetup" position="center,center" size="1080,300" backgroundColor="#16000000" title="New Virtual Keyboard Settings  V %s">
+            	<widget name="config" position="30,30" size="1020,190" itemHeight="45" font="Regular;30" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
             
-            	<ePixmap position="30,220" size="38,38" pixmap="~/images/key_red.png" zPosition="3" transparent="1" alphatest="blend" />
-             	<eLabel position="78,220" zPosition="4" size="300,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
+            	<ePixmap position="30,230" size="38,38" pixmap="~/images/key_red.png" zPosition="3" transparent="1" alphatest="blend" />
+             	<eLabel position="78,230" zPosition="4" size="300,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
              
-            	<ePixmap position="330,220" size="38,38" pixmap="~/images/key_green.png" zPosition="3" transparent="1" alphatest="blend" />
-            	<eLabel position="378,220" zPosition="4" size="300,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
+            	<ePixmap position="330,230" size="38,38" pixmap="~/images/key_green.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="378,230" zPosition="4" size="300,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
             
-            	<ePixmap position="630,220" size="38,38" pixmap="~/images/key_yellow.png" zPosition="3" transparent="1" alphatest="blend" />
-            	<eLabel position="678,220" zPosition="4" size="420,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard" />
-        	</screen>"""
+            	<ePixmap position="630,230" size="38,38" pixmap="~/images/key_yellow.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="678,230" zPosition="4" size="420,38" valign="center" font="Regular;30" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard" />
+        	</screen>""" % VER
     else:
         skin = """
-        	<screen name="nvKeyboardSetup" position="center,center" size="720,160" backgroundColor="#16000000" title="New Virtual Keyboard Settings">
-            	<widget name="config" position="20,20" size="680,320" itemHeight="30" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
+        	<screen name="nvKeyboardSetup" position="center,center" size="720,190" backgroundColor="#16000000" title="New Virtual Keyboard Settings  V %s">
+            	<widget name="config" position="20,20" size="680,345" itemHeight="30" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" zPosition="2" />
                     
-            	<ePixmap position="20,120" size="25,25" pixmap="~/images/key_red_sd.png" zPosition="3" transparent="1" alphatest="blend" />
-            	<eLabel position="52,120" zPosition="4" size="200,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
+            	<ePixmap position="20,150" size="25,25" pixmap="~/images/key_red_sd.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="52,150" zPosition="4" size="200,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Cancel" />
                         
-            	<ePixmap position="220,120" size="25,25" pixmap="~/images/key_green_sd.png" zPosition="3" transparent="1" alphatest="blend" />
-            	<eLabel position="252,120" zPosition="4" size="200,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
+            	<ePixmap position="220,150" size="25,25" pixmap="~/images/key_green_sd.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="252,150" zPosition="4" size="200,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Save" />
              
-            	<ePixmap position="420,120" size="25,25" pixmap="~/images/key_yellow_sd.png" zPosition="3" transparent="1" alphatest="blend" />
-            	<eLabel position="452,120" zPosition="4" size="280,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard" />
-        	</screen>"""
+            	<ePixmap position="420,150" size="25,25" pixmap="~/images/key_yellow_sd.png" zPosition="3" transparent="1" alphatest="blend" />
+            	<eLabel position="452,150" zPosition="4" size="280,25" valign="center" font="Regular;20" transparent="1" foregroundColor="#ffffff" backgroundColor="#41000000" text="Virtual keyboard" />
+        	</screen>""" % VER
 
     def __init__(self, session, fromkeyboard=False):
         Screen.__init__(self, session)
