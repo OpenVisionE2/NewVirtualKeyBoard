@@ -112,10 +112,10 @@ def getversioninfo():
     version_file = resolveFilename(SCOPE_LIBDIR, "enigma2/python/Plugins/SystemPlugins/NewVirtualKeyBoard/version")
     if os.path.exists(version_file):
         try:
-            fp=open(version_file, 'r').readlines()
+            fp = open(version_file, 'r').readlines()
             for line in fp:
                 if 'version' in line:
-                    currversion=line.split('=')[1].strip()
+                    currversion = line.split('=')[1].strip()
         except:
             pass
     return (currversion)
@@ -717,13 +717,13 @@ class selectList(GUIComponent, object):
         
         if isFHD():
             try:
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 21, 0, width - 42, height, 1, RT_HALIGN_LEFT|RT_VALIGN_CENTER, item))
+                res.append((eListboxPythonMultiContent.TYPE_TEXT, 21, 0, width - 42, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, item))
             except Exception:
                 pass
             return res
         else:
             try:
-                res.append((eListboxPythonMultiContent.TYPE_TEXT, 14, 0, width - 28, height, 1, RT_HALIGN_LEFT|RT_VALIGN_CENTER, item))
+                res.append((eListboxPythonMultiContent.TYPE_TEXT, 14, 0, width - 28, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, item))
             except Exception:
                 pass
             return res  
