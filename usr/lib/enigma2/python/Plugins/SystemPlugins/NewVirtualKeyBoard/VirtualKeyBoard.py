@@ -40,7 +40,7 @@ config.NewVirtualKeyBoard.keys_layout = ConfigText(default='', fixed_size=False)
 config.NewVirtualKeyBoard.lastsearchText = ConfigText(default='Enter search word', fixed_size=False)
 config.NewVirtualKeyBoard.firsttime = ConfigYesNo(default=True)
 config.NewVirtualKeyBoard.textinput = ConfigSelection(default='VirtualKeyBoard', choices=[('VirtualKeyBoard', _('Image virtual keyboard')), ('NewVirtualKeyBoard', _('New Virtual Keyboard'))])
-config.NewVirtualKeyBoard.showinplugins = ConfigYesNo(default = True)
+config.NewVirtualKeyBoard.showinplugins = ConfigYesNo(default=True)
 config.NewVirtualKeyBoard.showsuggestion = ConfigYesNo(default=True)
 
 def getDesktopSize():

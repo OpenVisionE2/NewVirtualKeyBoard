@@ -30,9 +30,9 @@ def Plugins(**kwargs):
 	result = [
 		PluginDescriptor(
 			name=PNAME,
-			description = DES,
-			where = PluginDescriptor.WHERE_MENU,
-			fnc = menu,
+			description=DES,
+			where=PluginDescriptor.WHERE_MENU,
+			fnc=menu,
 			needsRestart=False
 		),
 	]
