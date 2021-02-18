@@ -1271,7 +1271,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         try:
             self.session.openWithCallback(self.languageSelectionBack, LanguageListScreen, listValue, selIdx, self.loadVKLayout)
         except:
-            print ("switchToLanguageSelection error")
+            print("switchToLanguageSelection error")
         return
 
     def languageSelectionBack(self, index=None):
