@@ -349,7 +349,7 @@ class KBLayoutLanguages():
 
             if not pathExists(flag):
                 flag = '/usr/share/enigma2/NewVirtualKeyBoard/flagshd/missing.png'
-            
+
         else:
             flag = '/usr/share/enigma2/NewVirtualKeyBoard/flags/' + str(lang) + '.png'
 
@@ -726,7 +726,7 @@ class selectList(GUIComponent, object):
         res = [None]
         width = self.l.getItemSize().width()
         height = self.l.getItemSize().height()
-        
+
         if isFHD():
             try:
                 res.append((eListboxPythonMultiContent.TYPE_TEXT, 21, 0, width - 42, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, item))
@@ -738,8 +738,8 @@ class selectList(GUIComponent, object):
                 res.append((eListboxPythonMultiContent.TYPE_TEXT, 14, 0, width - 28, height, 1, RT_HALIGN_LEFT | RT_VALIGN_CENTER, item))
             except Exception:
                 pass
-            return res  
-               
+            return res
+
     GUI_WIDGET = eListbox
     currentIndex = property(getCurrentIndex, moveToIndex)
     currentSelection = property(getCurrent)
@@ -967,7 +967,7 @@ class NewVirtualKeyBoard(Screen, textInputSuggestions, kb_layoutComponent, KBLay
         self['_57'].setText('Ctrl')
         self['_58'].setText('Alt')
         self['_60'].setText('Alt')
-        
+
         """
         if PY3:
             self['_61'].setText('\u2190')
