@@ -43,17 +43,21 @@ config.NewVirtualKeyBoard.textinput = ConfigSelection(default='VirtualKeyBoard',
 config.NewVirtualKeyBoard.showinplugins = ConfigYesNo(default=True)
 config.NewVirtualKeyBoard.showsuggestion = ConfigYesNo(default=True)
 
+
 def getDesktopSize():
     s = getDesktop(0).size()
     return (s.width(), s.height())
+
 
 def isHD():
     desktopSize = getDesktopSize()
     return desktopSize[0] == 1280
 
+
 def isFHD():
     desktopSize = getDesktopSize()
     return desktopSize[0] > 1280
+
 
 if isFHD():
     skin_xml = '/usr/share/enigma2/NewVirtualKeyBoard/NewVirtualKeyBoardfhd.xml'
@@ -81,18 +85,22 @@ hfile = '/etc/history'
 parameters = {}
 kblayout_loading_error = '%s kblayout load failed'
 
+
 def getLayoutFile(KBLayoutId):
     return vkLayoutDir + '%s.kle' % KBLayoutId
+
 
 def getSLayoutFile(KBLayoutId):
     file = 'kle%s.kle' % KBLayoutId
     return ServerUrl + file
+
 
 def pathExists(path):
     if os.path.exists(path):
         return True
     else:
         return False
+
 
 def downloadFile(url, target):
     try:
@@ -104,8 +112,10 @@ def downloadFile(url, target):
         print("language download error")
         return False
 
+
 def iconsDir(file=''):
     return '/usr/share/enigma2/NewVirtualKeyBoard/icons/' + file
+
 
 def getversioninfo():
     currversion = '1.0'
@@ -120,7 +130,9 @@ def getversioninfo():
             pass
     return (currversion)
 
+
 VER = getversioninfo()
+
 
 class languageSelectionList(GUIComponent, object):
 
@@ -775,11 +787,9 @@ class kb_layoutComponent:
         for i in range(1, 63):
             self['_%s' % i] = Label(' ')
 
-
         for m in range(3):
             self['m_%d' % m] = Label(' ')
 
-            
         self.keys_pixmapMap = SkeysMap
         self.markerMap = markerMap
         self.colMax = len(self.keyidMap[0])
@@ -1785,6 +1795,7 @@ class nvKeyboardSetup(ConfigListScreen, Screen):
         for x in self['config'].list:
             x[1].cancel()
         self.close()
+
 
 # name, iso code, kle code
 KbLayouts = [
