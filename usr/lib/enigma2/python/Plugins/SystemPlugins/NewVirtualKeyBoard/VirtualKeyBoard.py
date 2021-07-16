@@ -7,7 +7,6 @@ from enigma import loadPNG, ePoint, gRGB, eListboxPythonMultiContent, eListbox, 
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import NumberActionMap, ActionMap
-# from Components.HTMLComponent import *
 from Components.GUIComponent import GUIComponent
 from Components.Language import language
 from Components.config import config, ConfigText, ConfigSubsection, ConfigSelection, ConfigYesNo, getConfigListEntry, configfile
