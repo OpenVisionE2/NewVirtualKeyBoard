@@ -19,20 +19,16 @@ from Components.Pixmap import Pixmap
 from Tools.LoadPixmap import LoadPixmap
 from skin import loadSkin
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_LIBDIR
-
-from sys import version_info
-PY3 = version_info[0] == 3
+from six.moves.urllib.parse import quote as compat_quote
+from six.moves.urllib.request import urlopen as compat_urlopen
+from six import PY3
 
 if PY3:
     # Python 3
     compat_str = str
-    from urllib.parse import quote as compat_quote
-    from urllib.request import urlopen as compat_urlopen
 else:
     # Python 2
     compat_str = unicode
-    from urllib import quote as compat_quote
-    from urllib2 import urlopen as compat_urlopen
 
 config.NewVirtualKeyBoard = ConfigSubsection()
 config.NewVirtualKeyBoard.keys_layout = ConfigText(default='', fixed_size=False)
